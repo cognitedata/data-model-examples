@@ -22,4 +22,4 @@ This repository contains examples on how to work with data models in Cognite Dat
 Here you need to fill in the project (e.g. `cognite`), which cluster (e.g. `westeurope-1`) and Azure AD tenant (e.g. `cognite.onmicrosoft.com`).
 
 ## How to run an example
-1. Change directory to one of the example folders, e.g. `
+1. Change directory to one of the example folders, e.g. `guides/introduction`

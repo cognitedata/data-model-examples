@@ -1,0 +1,28 @@
+interface Person {
+  name: String!
+  age: Int
+}
+
+type Director implements Person {
+  name: String!
+  age: Int
+  didWinOscar: Boolean
+}
+
+type Actor implements Person {
+  name: String!
+  age: Int
+  didWinOscar: Boolean
+}
+
+type Movie {
+  name: String!
+  description: String
+  watchedIt: Boolean
+  imdbRating: Float
+  releasedYear: Int
+  gross: Int
+  runTime: Int
+  director: Director
+  actors: [Actor]
+}
