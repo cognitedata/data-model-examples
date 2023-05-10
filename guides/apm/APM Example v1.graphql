@@ -1,3 +1,4 @@
+"Represents a document"
 type Document {
   legacyExternalId: String
   name: String
@@ -10,7 +11,6 @@ type Equipment @view {
   title: String
   description: String
 
-  "Contextualisation"
   parent: Equipment
   children: [Equipment]
   rootLocation: Equipment
@@ -24,7 +24,6 @@ type Workorder @view {
   title: String # Short title
   description: String # Long description
 
-  "Scheduling information"
   startTime: Timestamp # Planned start time
   endTime: Timestamp # Planned end time
 
@@ -32,7 +31,6 @@ type Workorder @view {
   operations: [Task] # Subtasks of workorder
   materials: [Material] # Materials required to complete the work
 
-  "Standard activity information"
   type: String # e.g. Preventive, Corrective
   status: String # Status of activity (Completed, Ongoing, etc)
   priority: Int # Numeric priority of activity (1 = highest priority)
@@ -43,13 +41,12 @@ type Material @view {
   description: String
 }
 
-#Represents a task that needs to be performed as part of a workorder"
+"Represents a task that needs to be performed as part of a workorder"
 type Task @view {
   sourceId: String # ID of item as it states in source system
   title: String # Short title
   description: String # Long description
 
-  "Scheduling information"
   startTime: Timestamp 
   endTime: Timestamp 
   target: Equipment
