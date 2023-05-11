@@ -1,0 +1,16 @@
+{
+    "CDF_CLUSTER": "westeurope-1",
+    "CDF_PROJECT": "my_cdf_project",
+    "AZURE_TENANT_ID": "common",
+    "CDF_CLIENT_ID": "myclientid",
+    "CDF_CLIENT_SECRET": "myclientsecret",
+    "IDP_TOKEN_URL": "https://login.microsoftonline.com/{https://login.microsoftonline.com/{{AZURE_TENANT_ID}}/oauth2/v2.0/token}/oauth2/v2.0/token",
+    "IDP_SCOPES": "https://{{CDF_CLUSTER}}.cognitedata.com/.default",
+    "IDP_AUDIENCE": "https://{{CDF_CLUSTER}}.cognitedata.com/",
+    "prefix": "tutorial_",
+    "movie_actors_folder": "movie-actors",
+    "apm_simple_folder": "apm-simple",
+    "movie_actors_raw_db": "movies",
+    "movie_actors_datamodel": "MovieDM",
+    "movie_actors_space": "movies"
+}
