@@ -40,9 +40,18 @@ toml` file and poetry (if you prefer).
 
 Here you need to fill in the project (e.g. `cognite`), which cluster (e.g. `westeurope-1`) and Azure AD tenant (e.g. `cognite.onmicrosoft.com`).
 
-## How to run an example
+## How to run an example without checking out repo
 
-1. Edit `.guides/cookiecutter.json`
+1. Run `cookiecutter .` or `cookiecutter https://github.com/cognitedata/data-model-examples.git`
+2. Change directory to `./build/<example-to-use>`
+3. Check out the README.md file
+
+## Alternative way to run when you check out the repo
+
+1. Edit `cookiecutter.json` with your defaults
 2. Run `./build.sh`
-3. Change directory to `./build/<example-to-use>`
-4. Check out the README.md file
+3. You will find the built examples in either `./build` or the folder you specified
+
+## When developing examples
+
+You can also run `cookiecutter --replay .` This is very useful if you are editing the templates in `{{cookicutter.buildfolder}}`.
