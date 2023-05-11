@@ -49,7 +49,7 @@ Here you need to fill in the project (e.g. `cognite`), which cluster (e.g. `west
 ## Alternative way to run when you check out the repo
 
 1. Edit `cookiecutter.json` with your defaults
-2. Run `./build.sh`
+2. Run `cookiecutter --no-input .`
 3. You will find the built examples in either `./build` or the folder you specified
 
 ## When developing examples
