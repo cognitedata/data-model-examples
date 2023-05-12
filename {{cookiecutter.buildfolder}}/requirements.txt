@@ -1,0 +1,5 @@
+cookiecutter
+cognite-sdk
+click
+python-dotenv
+csv
