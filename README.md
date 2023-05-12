@@ -2,56 +2,54 @@
 
 This repository contains examples on how to work with data models in Cognite Data Fusion.
 
-## Setup
+## Getting Started
 
-This repo uses [cookiecutter](https://cookiecutter.readthedocs.io/en/stable/index.html) to manage examples.
-You can build the examples with your settings in an interactive way by installing cookiecutter and run `cookiecutter ./guides` or
-you can edit the `./guides/cookiecutter.json` file and then just run `./build.sh`. Either way, cookiecutter will story config
-files for you in `~/.cookiecutter`.
+The easiest way to use this repo is not to check it out, but rather use cookiecutter to make a local copy:
 
-0. To install the requirements for cookiecutter, you can either use `pip install -r requirements.txt` or use the supplied `pyproject.
-toml` file and poetry (if you prefer).
+```bash
+pip install cookiecutter
+cookiecutter https://github.com/cognitedata/data-model-examples.git
+```
 
-1. Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [pip](https://packaging.python.org/en/latest/tutorials/installing-packages/) if you do not already have them.
+You will be prompted to supply your credentials for a CDF project (you need client credentials, so a client
+id and a client secret). See the python SDK [intro doc](https://docs.cognite.com/dev/guides/sdk/python/python_auth_oidc/) for how to get the credentials.
 
-2. Install the data modeling cli tool:
+You will get a `./build` folder (unless you change the default) that contains the examples configured and ready
+for your CDF project!
+
+Cookicutter will store your configurations in `~/.cookiecutter_replay/`, so you can restore the build folder
+by running `cookiecutter --replay https://github.com/cognitedata/data-model-examples.git`
+
+## Prerequisites to run the examples
+
+The examples will have a README.md with more details, but you will need some prerequisites installed for all
+examples.
+
+1. Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and
+    [pip](https://packaging.python.org/en/latest/tutorials/installing-packages/) if you do not already have them.
+
+2. Change directory into the `./build` folder
+
+3. Install the data modeling cli tool:
 
     ```bash
     npm install -g @cognite/cdf-cli
     ```
 
-3. Install the transformations cli tool:
+4. Install the python requirements (or use poetry if you prefer that package manager):
 
     ```bash
-    pip install cognite-transformations-cli
+    pip install -r requirements.txt
     ```
 
-4. Clone this repository
-
-    ```bash
-    git clone https://github.com/cognitedata/data-model-examples.git
-    ```
-
-5. Authenticate with the data modeling cli tool
+5. Authenticate with the data modeling cli tool:
 
     ```bash
     cdf login
     ```
 
-Here you need to fill in the project (e.g. `cognite`), which cluster (e.g. `westeurope-1`) and Azure AD tenant (e.g. `cognite.onmicrosoft.com`).
+6. Look at the examples in each of the `./build/`sub-folders. There is a README.md in each.
 
-## How to run an example without checking out repo
+## About this template repository
 
-1. Run `cookiecutter .` or `cookiecutter https://github.com/cognitedata/data-model-examples.git`
-2. Change directory to `./build/<example-to-use>`
-3. Check out the README.md file
-
-## Alternative way to run when you check out the repo
-
-1. Edit `cookiecutter.json` with your defaults
-2. Run `cookiecutter --no-input .`
-3. You will find the built examples in either `./build` or the folder you specified
-
-## When developing examples
-
-You can also run `cookiecutter --replay .` This is very useful if you are editing the templates in `{{cookicutter.buildfolder}}`.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to contribute to the templates or new examples.
