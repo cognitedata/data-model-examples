@@ -1,4 +1,4 @@
-﻿"key","startTime","externalId","description","workOrder","toBeDone","endTime","itemInfo","itemName","title","criticality","method","isCompleted"
+"key","startTime","externalId","description","workOrder","toBeDone","endTime","itemInfo","itemName","title","criticality","method","isCompleted"
 "FAO-074014-","1343286000000","FAO-074014-","null","FAO-074014","false","1343472505000","VRD - 1ST STAGE COMPRESSOR","23-KA-9101","null","HIGH","","false"
 "FAO-075662-","1351234800000","FAO-075662-","null","FAO-075662","false","1351433755000","VRD - 1ST STAGE COMPRESSOR","23-KA-9101","null","HIGH","","false"
 "FAO-077072-10","1351234800000","FAO-077072-10","null","FAO-077072","true","1351526895000","VRD - PH 1STSTGSUCTCOOL CM IN","23-TV-92504","null","MEDIUM","","true"
