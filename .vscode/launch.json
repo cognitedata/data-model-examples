@@ -11,7 +11,7 @@
             "program": "${file}",
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
-                "movie_actors",
+                "apm_simple",
                 "--drop",
                 "True"
             ],

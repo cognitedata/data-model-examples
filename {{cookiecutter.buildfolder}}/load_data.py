@@ -16,9 +16,10 @@ if debug_status:
     load_dotenv("../.env")
     examples_config = {
         "movie_actors": {
-            "raw_db": "oid",
+            "raw_db": "test_movies",
             "raw_db_key": "id",
-        }
+        },
+        "apm_simple": {"raw_db": "test_apm_simple", "raw_db_key": "key"},
     }
 else:
     load_dotenv()
@@ -63,8 +64,9 @@ def load(file, drop, example_folder):
                     client.raw.tables.delete(raw_db, table.name)
             client.raw.databases.delete(raw_db)
     except:
-        print(f"Failed to delete {raw_db} for example {example_folder}.")
-        exit(1)
+        print(
+            f"Failed to delete {raw_db} for example {example_folder}. It may not exist."
+        )
     try:
         client.raw.databases.create(raw_db)
     except Exception as e:
@@ -78,26 +80,32 @@ def load(file, drop, example_folder):
             for f in filenames:
                 if ".csv" in f:
                     files.append(f)
+    key = examples_config.get(example_folder, {}).get("raw_db_key", "")
+    if key == "":
+        raise BaseException(
+            "Could not find raw_db_key in inventory.py for example {example_folder}."
+        )
     for f in files:
-        with open(f"./{example_folder}/data/{f}", "r") as file:
+        with open(f"./{example_folder}/data/{f}", "rt") as file:
             total = sum(1 for _ in file)
             file.seek(0)
             csv_reader = csv.DictReader(file, delimiter=",")
             count = 0
+            sub_total = 0
             rows = []
-            key = examples_config.get(example_folder, {}).get("raw_db_key", "")
-            if key == "":
-                raise BaseException(
-                    "Could not find raw_db_key in inventory.py for example {example_folder}."
-                )
             print(
-                f"Writing {total} rows to RAW database {raw_db} and table {f[:-4]}..."
+                f"Reading {total} lines from {f} to load into RAW database {raw_db} and table {f[:-4]}..."
             )
             for r in csv_reader:
-                rows.append(Row(key=key, columns=r.copy()))
+                if r.get(key) is None or r.get(key) == "":
+                    raise BaseException(
+                        f"Could not find key {key} in row {r} in {f} in example {example_folder} folder."
+                    )
+                rows.append(Row(key=r.get(key), columns=r))
                 count += 1
                 total -= 1
-                if count == 1000 or total == 0:
+                if count == 1000 or total == 1:
+                    sub_total += count
                     try:
                         client.raw.rows.insert(
                             db_name=raw_db,
@@ -112,6 +120,8 @@ def load(file, drop, example_folder):
                         exit(1)
                     rows = []
                     count = 0
+        print(f"    Uploaded {sub_total} rows to {f[:-4]}...")
+        sub_total = 0
 
 
 if __name__ == "__main__":
