@@ -48,7 +48,14 @@ examples.
     cdf login
     ```
 
-6. Look at the examples in each of the `./build/`sub-folders. There is a README.md in each.
+6. Load the environment variables from the .env file in the build folder:
+
+    ```bash
+    cd build
+    set -a; source .env; set +a
+    ```
+
+7. Look at the examples in each of the `./build/`sub-folders. There is a README.md in each.
 
 ## About this template repository
 
