@@ -3,4 +3,3 @@ cognite-sdk
 cognite-transformations-cli
 click
 python-dotenv
-csv

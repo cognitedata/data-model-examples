@@ -86,9 +86,26 @@ def load(file, drop, example_folder):
             "Could not find raw_db_key in inventory.py for example {example_folder}."
         )
     for f in files:
+        # Please note that for raw specifically, a panda dataframe is a more efficient way to upload data.
+        # pandas is an option when you install the sdk:
+        # pip install "cognite-sdk[pandas]"
+        #
+        # You can then do:
+        #
+        # import pandas as pd
+        # file_path = "path/to/your/file.csv"
+        # df = pd.read_csv(file_path)
+        # client.raw.rows.insert_dataframe("db1", "table1", df)
+        #
+        # The below code is a more generic way to upload data, but it is not as efficient as the above.
+        # However, it is easier to understand what happens, and the pattern can be used for other types of
+        # data types as well.
         with open(f"./{example_folder}/data/{f}", "rt") as file:
+            # Count the number of lines in the file and then reset the file pointer to the beginning of the file.
+            # This is to avoid having to read the file twice and load everything into memory at once.
             total = sum(1 for _ in file)
             file.seek(0)
+            # DictReader is an iterator and will read from the file when needed.
             csv_reader = csv.DictReader(file, delimiter=",")
             count = 0
             sub_total = 0
