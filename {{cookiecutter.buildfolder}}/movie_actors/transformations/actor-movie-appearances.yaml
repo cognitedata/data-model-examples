@@ -4,18 +4,18 @@ name: Movie-actor-appearances
 query: >-
   /* MAPPING_MODE_ENABLED: true */
 
-  /* {"version":1,"sourceType":"raw","mappings":[{"from":"id","to":"externalId","asType":"STRING"},{"from":"movie","to":"startNode","asType":"STRUCT<STRING:STRING>"},{"from":"actor","to":"endNode","asType":"STRUCT<STRING:STRING>"}],"sourceLevel1":"tutorial","sourceLevel2":"actor_movie_appearances"} */
+  /* {"version":1,"sourceType":"raw","mappings":[{"from":"id","to":"externalId","asType":"STRING"},{"from":"movie","to":"startNode","asType":"STRUCT<STRING:STRING>"},{"from":"actor","to":"endNode","asType":"STRUCT<STRING:STRING>"}],"sourceLevel1":"{{cookiecutter.prefix}}{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"actor_movie_appearances"} */
 
   select
     cast(`id` as STRING) as externalId,
-    node_reference('Movie', movie) as startNode,
-    node_reference('Movie', actor) as endNode
+    node_reference('{{cookiecutter.movie_actors_space}}', movie) as startNode,
+    node_reference('{{cookiecutter.movie_actors_space}}', actor) as endNode
   from
-    `tutorial`.`actor_movie_appearances`;
+    `{{cookiecutter.prefix}}{{cookiecutter.movie_actors_raw_db}}`.`actor_movie_appearances`;
 destination:
-  instanceSpace: Movie
+  instanceSpace: {{cookiecutter.movie_actors_space}}
   edgeType:
-    space: Movie
+    space: {{cookiecutter.movie_actors_space}}
     externalId: Movie.actors
   type: edges
 ignoreNullFields: true
@@ -30,6 +30,6 @@ authentication:
   # Optional: If idP requires providing the scopes
   cdfProjectName: ${TRANSFORMATIONS_PROJECT}
   scopes:
-   - ${TRANSFORMATIONS_SCOPES}
+    - ${TRANSFORMATIONS_SCOPES}
   # Optional: If idP requires providing the audience
   audience: ${TRANSFORMATIONS_AUDIENCE}

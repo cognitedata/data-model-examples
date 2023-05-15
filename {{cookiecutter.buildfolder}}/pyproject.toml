@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "data-model-examples"
+version = "0.1.0"
+description = "Data modeling examples for Cognite Data Fusion"
+authors = ["Your Name <you@example.com>"]
+license = "Apache 2.0"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+cookiecutter = "^2.1.1"
+click = "^8.1.3"
+python-dotenv = "^0.21.1"
+cognite-sdk = {version = "6.1.7", extras = ["pandas"]}
+cognite-transformations-cli = "^2.3.6"
+pandas = "^2.0.1"
+
+[tool.poetry.dev-dependencies]
+ipykernel = "^6.23.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
