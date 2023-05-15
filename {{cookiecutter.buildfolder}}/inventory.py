@@ -3,7 +3,8 @@
 examples_config = {
     "movie_actors": {
         "raw_db": "{{cookiecutter.movie_actors_raw_db}}",
-        "raw_db_key": "id",
     },
-    "apm_simple": {"raw_db": "{{cookiecutter.apm_simple_raw_db}}", "raw_db_key": "key"},
+    "apm_simple": {
+        "raw_db": "{{cookiecutter.apm_simple_raw_db}}",
+    },
 }

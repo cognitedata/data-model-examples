@@ -1,5 +1,6 @@
 cookiecutter
-cognite-sdk
+cognite-sdk[pandas]
 cognite-transformations-cli
 click
 python-dotenv
+pandas

@@ -35,9 +35,10 @@ if debug_status:
     examples_config = {
         "movie_actors": {
             "raw_db": "test_movies",
-            "raw_db_key": "id",
         },
-        "apm_simple": {"raw_db": "test_apm_simple", "raw_db_key": "key"},
+        "apm_simple": {
+            "raw_db": "test_apm_simple",
+        },
     }
 else:
     load_dotenv()
