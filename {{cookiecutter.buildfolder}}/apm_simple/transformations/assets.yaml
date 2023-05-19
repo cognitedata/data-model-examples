@@ -27,10 +27,11 @@ query: >-
 destination:
   view:
     space: {{cookiecutter.apm_simple_space}}
-    externalId: Asset
+    externalId: {{cookiecutter.apm_simple_datamodel}}
     version: ""
+    destinationType: Asset
   instanceSpace: {{cookiecutter.apm_simple_space}}
-  type: nodes
+  type: instances
 ignoreNullFields: true
 shared: true
 action: upsert

@@ -12,8 +12,9 @@ query: >-
 destination:
   view:
     space: {{cookiecutter.apm_simple_space}}
-    externalId: Workorder
+    externalId: {{cookiecutter.apm_simple_datamodel}}
     version: ""
+    destinationType: Workorder
   instanceSpace: {{cookiecutter.apm_simple_space}}
   type: nodes
 ignoreNullFields: true
