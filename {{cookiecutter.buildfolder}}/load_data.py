@@ -86,7 +86,7 @@ def load_raw(file, drop, example_folder):
                 if ".csv" in f:
                     files.append(f)
     for f in files:
-        with open(f"./{example_folder}/data/{f}", "rt") as file:
+        with open(f"./{example_folder}/data/raw/{f}", "rt") as file:
             click.echo(f"Uploading {f} to {raw_db}...")
             dataframe = pd.read_csv(file, dtype=str)
             dataframe = dataframe.fillna("")

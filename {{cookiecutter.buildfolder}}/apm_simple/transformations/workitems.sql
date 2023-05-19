@@ -1,5 +1,5 @@
 /* MAPPING_MODE_ENABLED: true */
-/* {"version":1,"sourceType":"raw","mappings":[{"from":"externalId","to":"externalId","asType":"STRING"},{"from":"description","to":"description","asType":"STRING"},{"from":"workOrder","to":"workOrder","asType":"STRUCT<`space`:STRING, `externalId`:STRING>"},{"from":"toBeDone","to":"toBeDone","asType":"BOOLEAN"},{"from":"itemInfo","to":"itemInfo","asType":"STRING"},{"from":"itemName","to":"itemName","asType":"STRING"},{"from":"title","to":"title","asType":"STRING"},{"from":"criticality","to":"criticality","asType":"STRING"},{"from":"method","to":"method","asType":"STRING"},{"from":"isCompleted","to":"isCompleted","asType":"BOOLEAN"}],"sourceLevel1":"{{cookiecutter.prefix}}{{cookiecutter.apm_simple_raw_db}}","sourceLevel2":"workitems"} */
+/* {"version":1,"sourceType":"raw","mappings":[{"from":"externalId","to":"externalId","asType":"STRING"},{"from":"description","to":"description","asType":"STRING"},{"from":"workOrder","to":"workOrder","asType":"STRUCT<`space`:STRING, `externalId`:STRING>"},{"from":"toBeDone","to":"toBeDone","asType":"BOOLEAN"},{"from":"itemInfo","to":"itemInfo","asType":"STRING"},{"from":"itemName","to":"itemName","asType":"STRING"},{"from":"title","to":"title","asType":"STRING"},{"from":"criticality","to":"criticality","asType":"STRING"},{"from":"method","to":"method","asType":"STRING"},{"from":"isCompleted","to":"isCompleted","asType":"BOOLEAN"}],"sourceLevel1":"{{cookiecutter.apm_simple_raw_db}}","sourceLevel2":"workitems"} */
 select
   cast(`externalId` as STRING) as externalId,
   cast(`description` as STRING) as description,
@@ -12,4 +12,4 @@ select
   cast(`method` as STRING) as method,
   cast(`isCompleted` as BOOLEAN) as isCompleted
 from
-  `{{cookiecutter.prefix}}{{cookiecutter.apm_simple_raw_db}}`.`workitems`;
+  `{{cookiecutter.apm_simple_raw_db}}`.`workitems`;
