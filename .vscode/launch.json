@@ -13,7 +13,9 @@
             "args": [
                 "apm_simple",
                 "--drop",
-                "True"
+                "True",
+                "--load",
+                "files"
             ],
             "console": "integratedTerminal",
             "justMyCode": false

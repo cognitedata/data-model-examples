@@ -12,7 +12,9 @@
     "movie_actors_raw_db": "tutorial_movies",
     "movie_actors_datamodel": "tutorial_MovieDM",
     "movie_actors_space": "tutorial_movies",
+    "movie_actors_data_set": "tutorial_movies",
     "apm_simple_raw_db": "tutorial_oid",
     "apm_simple_datamodel": "tutorial_apm_simple",
-    "apm_simple_space": "tutorial_apm_simple"
+    "apm_simple_space": "tutorial_apm_simple",
+    "apm_simple_data_set": "tutorial_apm_simple"
 }
