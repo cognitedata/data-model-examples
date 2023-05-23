@@ -1,0 +1,49 @@
+externalId: tutorial-load-assets
+name: tutorial-load-Assets
+query: >-
+  /* MAPPING_MODE_ENABLED: false */
+  /* {"version":1,"sourceType":"raw","mappings":[
+  {"from":"","to":"externalId"},{"from":"","to":"categoryId"},
+  {"from":"","to":"isCriticalLine"},{"from":"","to":"sourceDb"},
+  {"from":"","to":"updatedDate"},
+  {"from":"","to":"createdDate"},{"from":"","to":"parent"},
+  {"from":"","to":"description"},{"from":"","to":"tag"},
+  {"from":"","to":"areaId"},{"from":"","to":"isActive"}],
+  "sourceLevel1":"{{cookiecutter.apm_simple_raw_db}}","sourceLevel2":"assets"} */
+  select
+  cast(`externalId` as STRING) as externalId,
+  node_reference('{{cookiecutter.apm_simple_space}}', `parentExternalId`) as parent,
+  cast(`categoryId` as INT) as categoryId,
+  cast(`isCriticalLine` as BOOLEAN) as isCriticalLine,
+  cast(`sourceDb` as STRING) as sourceDb,
+  cast(`updatedDate` as TIMESTAMP) as updatedDate,
+  cast(`createdDate` as TIMESTAMP) as createdDate,
+  cast(`description` as STRING) as description,
+  cast(`tag` as STRING) as tag,
+  cast(`areaId` as INT) as areaId,
+  cast(`isActive` as BOOLEAN) as isActive
+  from
+  `{{cookiecutter.apm_simple_raw_db}}`.`assets`;
+destination:
+  view:
+    space: {{cookiecutter.apm_simple_space}}
+    externalId: {{cookiecutter.apm_simple_datamodel}}
+    version: ""
+    destinationType: Asset
+  instanceSpace: {{cookiecutter.apm_simple_space}}
+  type: instances
+ignoreNullFields: true
+shared: true
+action: upsert
+# Specify credentials separately like this:
+# You can also use different credentials for the running transformations than the ones you use to deploy
+authentication:
+  clientId: ${TRANSFORMATIONS_CLIENT_ID}
+  clientSecret: ${TRANSFORMATIONS_CLIENT_SECRET}
+  tokenUrl: ${TRANSFORMATIONS_TOKEN_URL}
+  # Optional: If idP requires providing the scopes
+  cdfProjectName: ${TRANSFORMATIONS_PROJECT}
+  scopes:
+    - ${TRANSFORMATIONS_SCOPES}
+  # Optional: If idP requires providing the audience
+  audience: ${TRANSFORMATIONS_AUDIENCE}

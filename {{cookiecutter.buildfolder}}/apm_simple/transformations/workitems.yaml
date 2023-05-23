@@ -1,0 +1,52 @@
+externalId: tutorial-load-workitems
+name: tutorial-load-Workitems
+query: >-
+  /* MAPPING_MODE_ENABLED: false */
+  /* {"version":1,"sourceType":"raw","mappings":[
+  {"from":"externalId","to":"externalId","asType":"STRING"},
+  {"from":"description","to":"description","asType":"STRING"},
+  {"from":"workOrder","to":"workOrder","asType":"STRUCT<`space`:STRING, `externalId`:STRING>"},
+  {"from":"toBeDone","to":"toBeDone","asType":"BOOLEAN"},
+  {"from":"itemInfo","to":"itemInfo","asType":"STRING"},
+  {"from":"itemName","to":"itemName","asType":"STRING"},
+  {"from":"title","to":"title","asType":"STRING"},
+  {"from":"criticality","to":"criticality","asType":"STRING"},
+  {"from":"method","to":"method","asType":"STRING"},
+  {"from":"isCompleted","to":"isCompleted","asType":"BOOLEAN"}],
+  "sourceLevel1":"{{cookiecutter.apm_simple_raw_db}}","sourceLevel2":"workitems"} */
+  select
+    cast(`externalId` as STRING) as externalId,
+    cast(`description` as STRING) as description,
+    node_reference('{{cookiecutter.apm_simple_space}}', `workOrder`) as workOrder,
+    cast(`toBeDone` as BOOLEAN) as toBeDone,
+    cast(`itemInfo` as STRING) as itemInfo,
+    cast(`itemName` as STRING) as itemName,
+    cast(`title` as STRING) as title,
+    cast(`criticality` as STRING) as criticality,
+    cast(`method` as STRING) as method,
+    cast(`isCompleted` as BOOLEAN) as isCompleted
+  from
+    `{{cookiecutter.apm_simple_raw_db}}`.`workitems`;
+destination:
+  view:
+    space: {{cookiecutter.apm_simple_space}}
+    externalId: {{cookiecutter.apm_simple_datamodel}}
+    version: ""
+    destinationType: Workitem
+  instanceSpace: {{cookiecutter.apm_simple_space}}
+  type: nodes
+ignoreNullFields: true
+shared: true
+action: upsert
+# Specify credentials separately like this:
+# You can also use different credentials for the running transformations than the ones you use to deploy
+authentication:
+  clientId: ${TRANSFORMATIONS_CLIENT_ID}
+  clientSecret: ${TRANSFORMATIONS_CLIENT_SECRET}
+  tokenUrl: ${TRANSFORMATIONS_TOKEN_URL}
+  # Optional: If idP requires providing the scopes
+  cdfProjectName: ${TRANSFORMATIONS_PROJECT}
+  scopes:
+    - ${TRANSFORMATIONS_SCOPES}
+  # Optional: If idP requires providing the audience
+  audience: ${TRANSFORMATIONS_AUDIENCE}

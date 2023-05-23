@@ -1,17 +1,17 @@
 # Manifest file downloaded from fusion
 externalId: tutorial-movie-actor-appearances
-name: Movie-actor-appearances
+name: tutorial-Movie-actor-appearances
 query: >-
   /* MAPPING_MODE_ENABLED: true */
 
-  /* {"version":1,"sourceType":"raw","mappings":[{"from":"id","to":"externalId","asType":"STRING"},{"from":"movie","to":"startNode","asType":"STRUCT<STRING:STRING>"},{"from":"actor","to":"endNode","asType":"STRUCT<STRING:STRING>"}],"sourceLevel1":"{{cookiecutter.prefix}}{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"actor_movie_appearances"} */
+  /* {"version":1,"sourceType":"raw","mappings":[{"from":"id","to":"externalId","asType":"STRING"},{"from":"movie","to":"startNode","asType":"STRUCT<STRING:STRING>"},{"from":"actor","to":"endNode","asType":"STRUCT<STRING:STRING>"}],"sourceLevel1":"{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"actor_movie_appearances"} */
 
   select
     cast(`id` as STRING) as externalId,
     node_reference('{{cookiecutter.movie_actors_space}}', movie) as startNode,
     node_reference('{{cookiecutter.movie_actors_space}}', actor) as endNode
   from
-    `{{cookiecutter.prefix}}{{cookiecutter.movie_actors_raw_db}}`.`actor_movie_appearances`;
+    `{{cookiecutter.movie_actors_raw_db}}`.`actor_movie_appearances`;
 destination:
   instanceSpace: {{cookiecutter.movie_actors_space}}
   edgeType:

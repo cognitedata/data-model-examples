@@ -1,16 +1,16 @@
 # Manifest file downloaded from fusion
 externalId: tutorial-directors
-name: Directors
+name: tutorial-Directors
 query: >-
   /* MAPPING_MODE_ENABLED: true */
 
-  /* {"version":1,"sourceType":"raw","mappings":[{"from":"name","to":"externalId","asType":"STRING"},{"from":"name","to":"name","asType":"STRING"},{"to":"age","asType":"INT"},{"from":"","to":"didWinOscar"}],"sourceLevel1":"{{cookiecutter.prefix}}{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"directors"} */
+  /* {"version":1,"sourceType":"raw","mappings":[{"from":"name","to":"externalId","asType":"STRING"},{"from":"name","to":"name","asType":"STRING"},{"to":"age","asType":"INT"},{"from":"","to":"didWinOscar"}],"sourceLevel1":"{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"directors"} */
 
   select
     cast(`name` as STRING) as externalId,
     cast(`name` as STRING) as name
   from
-    `{{cookiecutter.prefix}}{{cookiecutter.movie_actors_raw_db}}`.`directors`;
+    `{{cookiecutter.movie_actors_raw_db}}`.`directors`;
 destination:
   view:
     space: {{cookiecutter.movie_actors_space}}
