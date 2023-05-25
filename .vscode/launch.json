@@ -8,14 +8,14 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "load_data.py",
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
                 "apm_simple",
                 "--drop",
                 "True",
                 "--load",
-                "files"
+                "raw,files,timeseries"
             ],
             "console": "integratedTerminal",
             "justMyCode": false

@@ -13,8 +13,10 @@
     "movie_actors_datamodel": "tutorial_MovieDM",
     "movie_actors_space": "tutorial_movies",
     "movie_actors_data_set": "tutorial_movies",
+    "movie_actors_data_set_desc": "Data set for the movies-actor tutorial",
     "apm_simple_raw_db": "tutorial_oid",
     "apm_simple_datamodel": "tutorial_apm_simple",
     "apm_simple_space": "tutorial_apm_simple",
-    "apm_simple_data_set": "tutorial_apm_simple"
+    "apm_simple_data_set": "Valhall_System_23",
+    "apm_simple_data_set_desc": "Valhall_System_23"
 }
