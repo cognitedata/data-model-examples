@@ -188,7 +188,7 @@ def load_timeseries_datapoints(file: str) -> None:
         # Only load the supplied filename.
         files.append(file)
     else:
-        # Pick up all the .json files in the data folder of the example.
+        # Pick up all the .csv files in the data folder of the example.
         for _, _, filenames in os.walk(
             f"./{ToolGlobals.example}/data/timeseries/datapoints/"
         ):
