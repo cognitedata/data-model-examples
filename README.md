@@ -45,8 +45,10 @@ examples.
 5. Authenticate with the data modeling cli tool:
 
     ```bash
-    cdf login
+    ./cdf-login.sh
     ```
+
+## TODO Update steps below here
 
 6. Load the environment variables from the .env file in the build folder:
 
@@ -55,7 +57,7 @@ examples.
     set -a; source .env; set +a
     ```
 
-7. Look at the examples in each of the `./build/`sub-folders. There is a README.md in each.
+7. Look at the examples in each of the `./build/` sub-folders. There is a README.md in each.
 
 ## About this template repository
 

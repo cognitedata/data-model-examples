@@ -5,17 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Python: load_data.py",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "load_data.py",
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
                 "apm_simple",
                 "--drop",
                 "True",
                 "--load",
-                "files"
+                "raw,files,timeseries"
             ],
             "console": "integratedTerminal",
             "justMyCode": false
