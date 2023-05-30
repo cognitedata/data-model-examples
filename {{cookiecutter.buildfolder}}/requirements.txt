@@ -1,5 +1,5 @@
 cookiecutter==8.1.3
-cognite-sdk[pandas]==6.1.10
+cognite-sdk[pandas]==6.2.1
 cognite-transformations-cli==2.3.6
 click==8.1.3
 python-dotenv==0.21.1
