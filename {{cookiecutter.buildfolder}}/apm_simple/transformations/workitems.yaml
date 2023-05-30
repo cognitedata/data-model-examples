@@ -32,7 +32,7 @@ destination:
     space: {{cookiecutter.apm_simple_space}}
     externalId: {{cookiecutter.apm_simple_datamodel}}
     version: "1"
-    destinationType: Workitem
+    destinationType: WorkItem
   instanceSpace: {{cookiecutter.apm_simple_space}}
   type: instances
 ignoreNullFields: true

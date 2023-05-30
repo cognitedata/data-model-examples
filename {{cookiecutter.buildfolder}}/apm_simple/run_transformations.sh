@@ -6,3 +6,4 @@ transformations-cli run --external-id tutorial-load-workitems
 transformations-cli run --external-id tutorial-load-asset2children
 transformations-cli run --external-id tutorial-load-workorders2assets
 transformations-cli run --external-id tutorial-load-workitems2workorders
+transformations-cli run --external-id tutorial-load-workitems2assets

@@ -14,7 +14,8 @@ destination:
     space: {{cookiecutter.apm_simple_space}}
     externalId: {{cookiecutter.apm_simple_datamodel}}
     version: "1"
-    destinationType: Workorder
+    destinationType: WorkOrder
+    destinationRelationshipFromType: linkedAssets
   instanceSpace: {{cookiecutter.apm_simple_space}}
   type: instances
 ignoreNullFields: true
