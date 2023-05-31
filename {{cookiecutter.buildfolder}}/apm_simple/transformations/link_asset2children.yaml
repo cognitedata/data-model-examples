@@ -14,13 +14,14 @@ query: >-
   from
     `{{cookiecutter.apm_simple_raw_db}}`.`asset2children`;
 destination:
-  view:
+  dataModel:
     space: {{cookiecutter.apm_simple_space}}
     externalId: {{cookiecutter.apm_simple_datamodel}}
-    version: ""
+    version: "1"
     destinationType: Asset
+    destinationRelationshipFromType: children
   instanceSpace: {{cookiecutter.apm_simple_space}}
-  type: nodes
+  type: instances
 ignoreNullFields: true
 shared: true
 action: upsert

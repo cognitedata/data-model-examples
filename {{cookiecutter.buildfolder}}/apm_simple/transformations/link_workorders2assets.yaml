@@ -10,13 +10,14 @@ query: >-
   from
     `{{cookiecutter.apm_simple_raw_db}}`.`workorder2assets`;
 destination:
-  view:
+  dataModel:
     space: {{cookiecutter.apm_simple_space}}
     externalId: {{cookiecutter.apm_simple_datamodel}}
-    version: ""
-    destinationType: Workorder
+    version: "1"
+    destinationType: WorkOrder
+    destinationRelationshipFromType: linkedAssets
   instanceSpace: {{cookiecutter.apm_simple_space}}
-  type: nodes
+  type: instances
 ignoreNullFields: true
 shared: true
 action: upsert

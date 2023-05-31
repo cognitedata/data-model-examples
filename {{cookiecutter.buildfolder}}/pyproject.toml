@@ -10,8 +10,8 @@ python = "^3.10"
 cookiecutter = "^2.1.1"
 click = "^8.1.3"
 python-dotenv = "^0.21.1"
-cognite-sdk = {version = "6.1.7", extras = ["pandas"]}
-cognite-transformations-cli = "^2.3.6"
+cognite-sdk = {version = "6.2.1", extras = ["pandas"]}
+cognite-transformations-cli = "^2.3.9"
 pandas = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
