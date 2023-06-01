@@ -48,11 +48,11 @@ class CDFToolConfig:
                 base_url=os.environ["CDF_URL"],
                 project=os.environ["CDF_PROJECT"],
                 credentials=OAuthClientCredentials(
-                    token_url=os.environ["CDF_TOKEN_URL"],
-                    client_id=os.environ["CDF_CLIENT_ID"],
+                    token_url=os.environ["IDP_TOKEN_URL"],
+                    client_id=os.environ["IDP_CLIENT_ID"],
                     # client secret should not be stored in-code, so we load it from an environment variable
-                    client_secret=os.environ["CDF_CLIENT_SECRET"],
-                    scopes=[os.environ["CDF_SCOPES"]],
+                    client_secret=os.environ["IDP_CLIENT_SECRET"],
+                    scopes=[os.environ["IDP_SCOPES"]],
                 ),
             )
         )
