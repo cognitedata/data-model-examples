@@ -12,7 +12,7 @@ cookiecutter https://github.com/cognitedata/data-model-examples.git
 ```
 
 You will be prompted to supply your credentials for a CDF project (you need client credentials, so a client
-id and a client secret). See the python SDK [intro doc](https://docs.cognite.com/dev/guides/sdk/python/python_auth_oidc/) for how to get the credentials.
+id and a client secret). See the python SDK [intro doc](https://developer.cognite.com/dev/guides/sdk/python/python_auth_oidc) for how to get the credentials.
 
 You will get a `./build` folder (unless you change the default) that contains the examples configured and ready
 for your CDF project!
