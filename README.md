@@ -16,7 +16,7 @@ through a CDF access group (see below for needed permissions). You get the CDF p
 <support@cognite.com> and you configure the service principal/account in the identity provider (e.g. Azure Active Directory)
 that the CDF project has been configured to use.**
 
-See the python SDK [intro doc](https://docs.cognite.com/dev/guides/sdk/python/python_auth_oidc/) for how to get the credentials.
+See the python SDK [intro doc](https://developer.cognite.com/dev/guides/sdk/python/python_auth_oidc/) for how to get the credentials.
 The minimum CDF credentials needed are (note that if you scope to data sets, you need to make sure you include ALL data sets for ALL
 the examples you want to run or use the same data set for all examples):
 
