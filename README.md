@@ -2,6 +2,10 @@
 
 This repository contains examples on how to work with data models in Cognite Data Fusion.
 
+The code is licensed under the [Apache License 2.0](LICENSE.code.md), while the documentation and methods are licensed
+under [Creative Commons](LICENSE.docs.md). Each of the example data sets have their own license, see the LICENSE.dataset.md in each
+directory.
+
 ## KNOWN ISSUES
 
 * Once the data model has been populated with data using the transformations, the data in the data
