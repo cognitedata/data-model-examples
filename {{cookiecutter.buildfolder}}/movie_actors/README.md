@@ -1,6 +1,9 @@
 # Introduction to data modeling
 
-This is the reference code for the [introduction to data modeling](https://docs.cognite.com/cdf/data_modeling/intro_to_dm) in documentation. This tutorial assumes you have access to execute Python (and install packages using `pip`) and install packages using `npm` through the terminal.
+Please see the [license for this data set](LICENSE.dataset.md).
+
+This is the reference code for the [introduction to data modeling](https://docs.cognite.com/cdf/data_modeling/intro_to_dm) in documentation.
+This tutorial assumes you have access to execute Python (and install packages using `pip`) and install packages using `npm` through the terminal.
 
 In this tutorial, we only create, deploy and populate the data model. See [Query data from a data model](https://docs.cognite.com/cdf/data_modeling/guides/query_data_dm) on how to query the data.
 
