@@ -154,17 +154,37 @@ def delete_datamodel(instances_only=True) -> None:
     delete these, and then delete the containers and views, before finally deleting the
     data model itself.
     """
-    client = ToolGlobals.verify_client(
-        capabilities={
-            "dataModelsAcl": ["READ", "WRITE"],
-            "dataModelInstancesAcl": ["READ", "WRITE"],
-        }
-    )
+    try:
+        client = ToolGlobals.verify_client(
+            capabilities={
+                "dataModelsAcl": ["READ", "WRITE"],
+                "dataModelInstancesAcl": ["READ", "WRITE"],
+            }
+        )
+    except Exception as e:
+        click.echo(f"Failed to verify client for example {ToolGlobals.example}")
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
     space_name = ToolGlobals.config("model_space")
     model_name = ToolGlobals.config("data_model")
-    data_model = client.data_modeling.data_models.retrieve(
-        (space_name, model_name, "1")
-    )
+    try:
+        data_model = client.data_modeling.data_models.retrieve(
+            (space_name, model_name, "1")
+        )
+    except Exception as e:
+        click.echo(
+            f"Failed to retrieve data model {model_name} for example {ToolGlobals.example}"
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
+    if len(data_model) == 0:
+        click.echo(
+            f"Failed to retrieve data model {model_name} for example {ToolGlobals.example}"
+        )
+        ToolGlobals.failed = True
+        return
     view_list = [
         (space_name, d.external_id, d.version) for d in data_model.data[0].views
     ]
@@ -172,8 +192,6 @@ def delete_datamodel(instances_only=True) -> None:
     views = []
     # For all the views in this data model...
     for _, id, version in view_list:
-        # ...expand the views with the view details
-        views.append(client.data_modeling.views.retrieve((space_name, id, version)))
         # ...retrieve all the instances of the view
         cursors = {}
         instances = []
@@ -202,10 +220,20 @@ def delete_datamodel(instances_only=True) -> None:
             if len(cursors) > 0:
                 query["cursors"] = cursors
             # Retrieve the instances of the view
-            nodes = client.post(
-                "/api/v1/projects/" + client.config.project + "/models/instances/query",
-                json=query,
-            ).json()
+            try:
+                nodes = client.post(
+                    "/api/v1/projects/"
+                    + client.config.project
+                    + "/models/instances/query",
+                    json=query,
+                ).json()
+            except Exception as e:
+                click.echo(
+                    f"Failed to retrieve instances of view {id} for example {ToolGlobals.example}"
+                )
+                click.echo(e)
+                ToolGlobals.failed = True
+                return
             # Build the list of instances needed for deletion
             instances.extend(
                 [
@@ -226,20 +254,34 @@ def delete_datamodel(instances_only=True) -> None:
             stop = start + 999  # Max number of instances to delete in one request
             if stop > len(instances):
                 stop = len(instances)
-            ret = client.post(
-                "/api/v1/projects/"
-                + client.config.project
-                + "/models/instances/delete",
-                json={"items": instances[start:stop]},
-            ).json()
+            try:
+                ret = client.post(
+                    "/api/v1/projects/"
+                    + client.config.project
+                    + "/models/instances/delete",
+                    json={"items": instances[start:stop]},
+                ).json()
+            except Exception as e:
+                click.echo(
+                    f"Failed to delete instances of view {id} for example {ToolGlobals.example}"
+                )
+                click.echo(e)
+                ToolGlobals.failed = True
+                return
             count += len(ret.get("items", []))
             start += stop
 
         print(f"Deleted {count} nodes and edges from {id} in {model_name}.")
 
-    containers = client.data_modeling.containers.list(
-        space=ToolGlobals.config("model_space"), limit=None
-    )
+    try:
+        containers = client.data_modeling.containers.list(
+            space=ToolGlobals.config("model_space"), limit=None
+        )
+    except Exception as e:
+        click.echo(f"Failed to retrieve containers for example {ToolGlobals.example}")
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
     container_list = [(space_name, c.external_id) for c in containers.data]
     for _, id in container_list:
         query = {
@@ -261,10 +303,13 @@ def delete_datamodel(instances_only=True) -> None:
             },
             "select": {id: {}},
         }
-        nodes = client.post(
-            "/api/v1/projects/" + client.config.project + "/models/instances/query",
-            json=query,
-        ).json()
+        try:
+            nodes = client.post(
+                "/api/v1/projects/" + client.config.project + "/models/instances/query",
+                json=query,
+            ).json()
+        except Exception as e:
+            continue
         if len(nodes.get("items", {}).get(id, [])) > 0:
             click.echo(
                 f"ERROR! Found {len(nodes)} remaining nodes in the container: {id}"
@@ -272,12 +317,22 @@ def delete_datamodel(instances_only=True) -> None:
             ToolGlobals.failed = True
     if instances_only:
         return
-    client.data_modeling.containers.delete(container_list)
-    click.echo(f"Deleted {len(container_list)} containers in data model {model_name}.")
-    client.data_modeling.views.delete(view_list)
-    click.echo(f"Deleted {len(view_list)} views in data model {model_name}.")
-    client.data_modeling.data_models.delete((space_name, model_name, "1"))
-    click.echo(f"Deleted the data model {model_name}.")
+    try:
+        client.data_modeling.containers.delete(container_list)
+        click.echo(
+            f"Deleted {len(container_list)} containers in data model {model_name}."
+        )
+        client.data_modeling.views.delete(view_list)
+        click.echo(f"Deleted {len(view_list)} views in data model {model_name}.")
+        client.data_modeling.data_models.delete((space_name, model_name, "1"))
+        click.echo(f"Deleted the data model {model_name}.")
+    except Exception as e:
+        click.echo(
+            f"Failed to delete containers, views, or data model {model_name} for example {ToolGlobals.example}"
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
 
 
 if __name__ == "__main__":
