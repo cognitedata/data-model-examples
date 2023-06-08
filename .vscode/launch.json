@@ -19,6 +19,20 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "Python: delete_data.py",
+            "type": "python",
+            "request": "launch",
+            "program": "delete_data.py",
+            "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
+            "args": [
+                "apm_simple",
+                "--delete",
+                "datamodel" //"raw,timeseries,files,datamodel"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
     ]
 }
