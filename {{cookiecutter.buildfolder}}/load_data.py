@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2023 Gognite AS
+# Copyright 2023 Cognite AS
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,15 @@ import os
 import click
 import json
 from cognite.client.data_classes.time_series import TimeSeries
+from cognite.client.exceptions import CogniteNotFoundError
 from utils import ToolGlobals
+from utils.transformations_config import parse_transformation_configs
+from utils.transformations_api import (
+    to_transformation,
+    get_existing_transformation_ext_ids,
+    get_new_transformation_ids,
+    upsert_transformations,
+)
 import pandas as pd
 
 
@@ -26,8 +34,8 @@ import pandas as pd
 @click.option("--file", default="", help="Specify a specific table to load.")
 @click.option(
     "--load",
-    default="raw,timeseries,files",
-    help="Specify which data you want to load, default raw,timeseries,files.",
+    default="raw,timeseries,files,transformations",
+    help="Specify which data you want to load. Default raw,timeseries,files,transformations.",
 )
 @click.option("--drop", default=False, help="Whether to delete existing data.")
 @click.argument("example_folder")
@@ -41,6 +49,11 @@ def cli(file: str, load: str, drop: bool, example_folder: str):
         load_files(file, drop)
     if "timeseries" in load:
         load_timeseries(file, drop)
+    if "transformations" in load:
+        load_transformations(file, drop)
+    if ToolGlobals.failed:
+        click.echo(f"Failure to load as expected.")
+        exit(1)
 
 
 def load_raw(file: str, drop: bool) -> None:
@@ -49,7 +62,6 @@ def load_raw(file: str, drop: bool) -> None:
     Args:
         file: name of file to load, if empty load all files
         drop: whether to drop existing data
-        example_folder: name of example folder where data can be found
     """
     client = ToolGlobals.verify_client(capabilities={"rawAcl": ["READ", "WRITE"]})
     # The name of the raw database to create is picked up from the inventory.py file, which
@@ -59,6 +71,7 @@ def load_raw(file: str, drop: bool) -> None:
         click.echo(
             f"Could not find raw_db in inventory.py for example {ToolGlobals.example}."
         )
+        ToolGlobals.failed = True
         return
     try:
         if drop:
@@ -82,6 +95,7 @@ def load_raw(file: str, drop: bool) -> None:
         click.echo(
             f"Failed to create {raw_db} for example {ToolGlobals.example}: {e.message}"
         )
+        ToolGlobals.failed = True
         return
     files = []
     if file:
@@ -93,6 +107,8 @@ def load_raw(file: str, drop: bool) -> None:
             for f in filenames:
                 if ".csv" in f:
                     files.append(f)
+    if len(files) == 0:
+        return
     click.echo(f"Uploading {len(files)} .csv files to {raw_db} RAW database...")
     for f in files:
         with open(f"./{ToolGlobals.example}/data/raw/{f}", "rt") as file:
@@ -108,6 +124,7 @@ def load_raw(file: str, drop: bool) -> None:
             except Exception as e:
                 click.echo(f"Failed to upload {f} for example {ToolGlobals.example}")
                 click.echo(e)
+                ToolGlobals.failed = True
                 return
     click.echo(
         f"Successfully uploaded {len(files)} raw csv files to {raw_db} RAW database."
@@ -125,6 +142,8 @@ def load_files(file: str, drop: bool) -> None:
             for _, _, filenames in os.walk(f"./{ToolGlobals.example}/data/files"):
                 for f in filenames:
                     files.append(f)
+        if len(files) == 0:
+            return
         click.echo(f"Uploading {len(files)} files/documents to CDF...")
         for f in files:
             client.files.upload(
@@ -140,6 +159,7 @@ def load_files(file: str, drop: bool) -> None:
     except Exception as e:
         click.echo(f"Failed to upload files for example {ToolGlobals.example}")
         click.echo(e)
+        ToolGlobals.failed = True
         return
 
 
@@ -169,6 +189,8 @@ def load_timeseries_metadata(file: str, drop: bool) -> None:
             ts = json.load(file)
             for t in ts:
                 timeseries.append(TimeSeries._load(t))
+    if len(timeseries) == 0:
+        return
     drop_ts: list[str] = []
     for t in timeseries:
         # Set the context info for this CDF project
@@ -190,6 +212,7 @@ def load_timeseries_metadata(file: str, drop: bool) -> None:
     except Exception as e:
         click.echo(f"Failed to upload timeseries for example {ToolGlobals.example}.")
         click.echo(e)
+        ToolGlobals.failed = True
         return
     click.echo(f"Loaded {len(timeseries)} timeseries from {len(files)} files.")
 
@@ -210,17 +233,83 @@ def load_timeseries_datapoints(file: str) -> None:
             for f in filenames:
                 if ".csv" in f:
                     files.append(f)
+    if len(files) == 0:
+        return
     click.echo(
         f"Uploading {len(files)} .csv file(s) as datapoints to CDF timeseries..."
     )
-    for f in files:
-        with open(
-            f"./{ToolGlobals.example}/data/timeseries/datapoints/{f}", "rt"
-        ) as file:
-            dataframe = pd.read_csv(file, parse_dates=True, index_col=0)
-        click.echo(f"Uploading {f} as datapoints to CDF timeseries...")
-        client.time_series.data.insert_dataframe(dataframe)
-    click.echo(f"Uploaded {len(files)} .csv file(s) as datapoints to CDF timeseries.")
+    try:
+        for f in files:
+            with open(
+                f"./{ToolGlobals.example}/data/timeseries/datapoints/{f}", "rt"
+            ) as file:
+                dataframe = pd.read_csv(file, parse_dates=True, index_col=0)
+            click.echo(f"Uploading {f} as datapoints to CDF timeseries...")
+            client.time_series.data.insert_dataframe(dataframe)
+        click.echo(
+            f"Uploaded {len(files)} .csv file(s) as datapoints to CDF timeseries."
+        )
+    except Exception as e:
+        click.echo(f"Failed to upload datapoints for example {ToolGlobals.example}.")
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
+
+
+def load_transformations(file: str, drop: bool) -> None:
+    client = ToolGlobals.verify_client(
+        capabilities={"transformationsAcl": ["READ", "WRITE"]}
+    )
+    tmp = ""
+    if file:
+        # Only load the supplied filename.
+        os.mkdir(f"./{ToolGlobals.example}/transformations/tmp")
+        os.system(
+            f"cp ./{ToolGlobals.example}/transformations/{file} ./{ToolGlobals.example}/transformations/tmp/"
+        )
+        tmp = "tmp/"
+    configs = parse_transformation_configs(
+        f"./{ToolGlobals.example}/transformations/" + tmp + tmp
+    )
+    if len(tmp) > 0:
+        os.system(f"rm -rf ./{ToolGlobals.example}/transformations/tmp")
+    cluster = os.environ.get("CDF_CLUSTER", "westeurope-1")
+    transformations = [
+        to_transformation(client, conf_path, configs[conf_path], cluster)
+        for conf_path in configs
+    ]
+    transformations_ext_ids = [t.external_id for t in configs.values()]
+    try:
+        if drop:
+            client.transformations.delete(external_id=transformations_ext_ids)
+    except CogniteNotFoundError:
+        pass
+    try:
+        existing_transformations_ext_ids = get_existing_transformation_ext_ids(
+            client, transformations_ext_ids
+        )
+        new_transformation_ext_ids = get_new_transformation_ids(
+            transformations_ext_ids, existing_transformations_ext_ids
+        )
+        _, updated_transformations, created_transformations = upsert_transformations(
+            client,
+            transformations,
+            existing_transformations_ext_ids,
+            new_transformation_ext_ids,
+        )
+    except Exception as e:
+        click.echo(
+            f"Failed to upsert transformations for example {ToolGlobals.example}."
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
+    click.echo(
+        f"Updated {len(updated_transformations)} transformations for example {ToolGlobals.example}."
+    )
+    click.echo(
+        f"Created {len(created_transformations)} transformations for example {ToolGlobals.example}."
+    )
 
 
 if __name__ == "__main__":

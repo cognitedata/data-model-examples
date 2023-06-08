@@ -2,11 +2,15 @@
     "movie_actors": {
         "raw_db": "{{cookiecutter.movie_actors_raw_db}}",
         "data_set": "{{cookiecutter.movie_actors_data_set}}",
-        "data_set_desc": "{{cookiecutter.movie_actors_data_set_desc}}"
+        "data_set_desc": "{{cookiecutter.movie_actors_data_set_desc}}",
+        "model_space": "{{cookiecutter.movie_actors_space}}",
+        "data_model": "{{cookiecutter.movie_actors_datamodel}}"
     },
     "apm_simple": {
         "raw_db": "{{cookiecutter.apm_simple_raw_db}}",
         "data_set": "{{cookiecutter.apm_simple_data_set}}",
-        "data_set_desc": "{{cookiecutter.apm_simple_data_set_desc}}"
+        "data_set_desc": "{{cookiecutter.apm_simple_data_set_desc}}",
+        "model_space": "{{cookiecutter.apm_simple_space}}",
+        "data_model": "{{cookiecutter.apm_simple_datamodel}}"
     }
 }

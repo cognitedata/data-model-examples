@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2023 Gognite AS
+# Copyright 2023 Cognite AS
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,3 @@ set +a
 echo "Logging into CDF using environment variables from .env..."
 cdf login --client-id=$IDP_CLIENT_ID --client-secret=$IDP_CLIENT_SECRET --tenant=$IDP_TENANT_ID --cluster=$CDF_CLUSTER $CDF_PROJECT
 cdf status
-
-echo "Testing by listing transformations..."
-# This will also work when .env variables are loaded: transformations-cli list
-transformations-cli --token-url=$IDP_TOKEN_URL --client-secret=$IDP_CLIENT_SECRET --client-id=$IDP_CLIENT_ID --scopes=$IDP_SCOPES --cluster=$CDF_CLUSTER --cdf-project-name=$CDF_PROJECT list

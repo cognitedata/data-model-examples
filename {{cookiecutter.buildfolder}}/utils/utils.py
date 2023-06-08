@@ -1,4 +1,4 @@
-# Copyright 2023 Gognite AS
+# Copyright 2023 Cognite AS
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ class CDFToolConfig:
     def __init__(self, config: dict | None = None) -> None:
         self._data_set_id: int = 0
         self._example = None
+        self._failed = False
         if config is not None:
             self._config = config
         else:
@@ -70,6 +71,16 @@ class CDFToolConfig:
                 ),
             )
         )
+
+    @property
+    # Flag set if something that should have worked failed if a data set is
+    # loaded and/or deleted.
+    def failed(self) -> bool:
+        return self._failed
+
+    @failed.setter
+    def failed(self, value: bool):
+        self._failed = value
 
     @property
     def client(self) -> CogniteClient:
