@@ -127,15 +127,28 @@ examples.
     Adding `--drop true` will delete all the data that can be deleted before
     loading the data fresh. **Please note that data sets cannot be deleted!!**
 
+    This command will also default load the transformations in the example directory.
+
 8. Load the data model
 
     To load the data model for a specific example, run:
 
     ```bash
-    ./<example_dir>/load_data_model.sh
+    ./<example_dir>/load_datamodel.sh
     ```
 
-9. Look at the README.md in each example folder. It will tell you if there are more example-specific options, like loading and running transformations etc.
+9. Run the transformations
+
+    To run the transformations for a specific example, run:
+
+    ```bash
+    ./run_transformations.py <example_dir>
+    ```
+
+    This will run all the transformations in the example folder. If you want to run a specific
+    transformation, you can specify `--file name-of-transformation.yaml` as an option.
+
+10. Look at the README.md in each example folder. It will tell you if there are more example-specific options.
 
 ## About the examples
 

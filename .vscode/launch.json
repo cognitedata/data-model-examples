@@ -15,7 +15,7 @@
                 "--drop",
                 "True",
                 "--load",
-                "raw,files,timeseries"
+                "raw,timeseries,files,transformations"
             ],
             "console": "integratedTerminal",
             "justMyCode": false
@@ -29,7 +29,19 @@
             "args": [
                 "apm_simple",
                 "--delete",
-                "datamodel" //"raw,timeseries,files,datamodel"
+                "transformations" //"raw,timeseries,files,datamodel"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: run_transformations.py",
+            "type": "python",
+            "request": "launch",
+            "program": "run_transformations.py",
+            "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
+            "args": [
+                "apm_simple"
             ],
             "console": "integratedTerminal",
             "justMyCode": false

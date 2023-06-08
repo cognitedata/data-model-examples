@@ -13,11 +13,6 @@
 # limitations under the License.
 
 #/bin/bash
-echo "Running transformations..."
-transformations-cli run --external-id tutorial-load-assets
-transformations-cli run --external-id tutorial-load-workorders
-transformations-cli run --external-id tutorial-load-workitems
-transformations-cli run --external-id tutorial-load-asset2children
-transformations-cli run --external-id tutorial-load-workorders2assets
-transformations-cli run --external-id tutorial-load-workitems2workorders
-transformations-cli run --external-id tutorial-load-workitems2assets
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cdf dm create --interactive false --external-id {{cookiecutter.movie_actors_datamodel}} --space {{cookiecutter.movie_actors_space}} {{cookiecutter.movie_actors_datamodel}}
+cdf dm publish --interactive false --external-id {{cookiecutter.movie_actors_datamodel}} --space {{cookiecutter.movie_actors_space}} --version 1 --file $SCRIPT_DIR/datamodel.graphql

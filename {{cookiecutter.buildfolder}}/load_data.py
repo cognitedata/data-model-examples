@@ -18,7 +18,15 @@ import os
 import click
 import json
 from cognite.client.data_classes.time_series import TimeSeries
+from cognite.client.exceptions import CogniteNotFoundError
 from utils import ToolGlobals
+from utils.transformations_config import parse_transformation_configs
+from utils.transformations_api import (
+    to_transformation,
+    get_existing_transformation_ext_ids,
+    get_new_transformation_ids,
+    upsert_transformations,
+)
 import pandas as pd
 
 
@@ -26,8 +34,8 @@ import pandas as pd
 @click.option("--file", default="", help="Specify a specific table to load.")
 @click.option(
     "--load",
-    default="raw,timeseries,files",
-    help="Specify which data you want to load, default raw,timeseries,files.",
+    default="raw,timeseries,files,transformations",
+    help="Specify which data you want to load. Default raw,timeseries,files,transformations.",
 )
 @click.option("--drop", default=False, help="Whether to delete existing data.")
 @click.argument("example_folder")
@@ -41,6 +49,8 @@ def cli(file: str, load: str, drop: bool, example_folder: str):
         load_files(file, drop)
     if "timeseries" in load:
         load_timeseries(file, drop)
+    if "transformations" in load:
+        load_transformations(file, drop)
     if ToolGlobals.failed:
         click.echo(f"Failure to load as expected.")
         exit(1)
@@ -244,6 +254,62 @@ def load_timeseries_datapoints(file: str) -> None:
         click.echo(e)
         ToolGlobals.failed = True
         return
+
+
+def load_transformations(file: str, drop: bool) -> None:
+    client = ToolGlobals.verify_client(
+        capabilities={"transformationsAcl": ["READ", "WRITE"]}
+    )
+    tmp = ""
+    if file:
+        # Only load the supplied filename.
+        os.mkdir(f"./{ToolGlobals.example}/transformations/tmp")
+        os.system(
+            f"cp ./{ToolGlobals.example}/transformations/{file} ./{ToolGlobals.example}/transformations/tmp/"
+        )
+        tmp = "tmp/"
+    configs = parse_transformation_configs(
+        f"./{ToolGlobals.example}/transformations/" + tmp + tmp
+    )
+    if len(tmp) > 0:
+        os.system(f"rm -rf ./{ToolGlobals.example}/transformations/tmp")
+    cluster = os.environ.get("CDF_CLUSTER", "westeurope-1")
+    transformations = [
+        to_transformation(client, conf_path, configs[conf_path], cluster)
+        for conf_path in configs
+    ]
+    transformations_ext_ids = [t.external_id for t in configs.values()]
+    try:
+        if drop:
+            client.transformations.delete(external_id=transformations_ext_ids)
+    except CogniteNotFoundError:
+        pass
+    try:
+        existing_transformations_ext_ids = get_existing_transformation_ext_ids(
+            client, transformations_ext_ids
+        )
+        new_transformation_ext_ids = get_new_transformation_ids(
+            transformations_ext_ids, existing_transformations_ext_ids
+        )
+        _, updated_transformations, created_transformations = upsert_transformations(
+            client,
+            transformations,
+            existing_transformations_ext_ids,
+            new_transformation_ext_ids,
+        )
+    except Exception as e:
+        click.echo(
+            f"Failed to upsert transformations for example {ToolGlobals.example}."
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
+    click.echo(
+        f"Updated {len(updated_transformations)} transformations for example {ToolGlobals.example}."
+    )
+    click.echo(
+        f"Created {len(created_transformations)} transformations for example {ToolGlobals.example}."
+    )
 
 
 if __name__ == "__main__":

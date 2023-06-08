@@ -17,26 +17,6 @@ Below is a snippet from the Cognite Hub website describing the data:
 > monitoring, and advanced visualization techniques, as well as other new, unexpected applications. Advancement in these areas will directly benefit Aker BP’s operations and will also
 >improve the health and outlook of the industrial ecosystem on the Norwegian Continental Shelf.
 
-## Load the transformations
-
-When you have loaded the dataset and the data model as described in the main README.me, you can load the transformations.
-
-```bash
-cd ./build/apm_simple
-transformations-cli deploy transformations
-```
-
-The transformations-cli tool will deploy all the .yaml configurations in the
-transformations folder.
-
-## Run the transformations
-
-You can now run the transformations that will ingest the data from the RAW database into the Asset Performance Management data model:
-
-```bash
-./apm_simple/run_transformations.sh
-```
-
 ## Investigation into operational states of a compressor
 
 The jupyter notebook will show you how to query the data model using the Cognite Python SDK. The time series loaded in the data set are used to explore

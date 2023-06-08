@@ -18,6 +18,7 @@ import os
 import click
 import json
 from cognite.client.data_classes.time_series import TimeSeries
+from utils.transformations_config import parse_transformation_configs
 from utils import ToolGlobals
 import pandas as pd
 
@@ -25,8 +26,8 @@ import pandas as pd
 @click.command()
 @click.option(
     "--delete",
-    default="raw,timeseries,files,datamodel,instances",
-    help="Specify which data you want to delete, default raw,timeseries,files,datamodel(all), instances.",
+    default="raw,timeseries,files,transformations,datamodel,instances",
+    help="Specify which data you want to delete. Default raw,timeseries,files,transformations,datamodel(all), instances.",
 )
 @click.argument("example_folder")
 def cli(delete: str, example_folder: str):
@@ -39,6 +40,8 @@ def cli(delete: str, example_folder: str):
         delete_files()
     if "timeseries" in delete:
         delete_timeseries()
+    if "transformations" in delete:
+        delete_transformations()
     if "instances" in delete and "datamodel" not in delete:
         delete_datamodel(instances_only=True)
     if "datamodel" in delete:
@@ -145,6 +148,25 @@ def delete_timeseries() -> None:
         ToolGlobals.failed = True
 
 
+def delete_transformations() -> None:
+    client = ToolGlobals.verify_client(
+        capabilities={"transformationsAcl": ["READ", "WRITE"]}
+    )
+    configs = parse_transformation_configs(f"./{ToolGlobals.example}/transformations/")
+    transformations_ext_ids = [t.external_id for t in configs.values()]
+    try:
+        client.transformations.delete(external_id=transformations_ext_ids)
+        click.echo(
+            f"Deleted {len(transformations_ext_ids)} transformations for example {ToolGlobals.example}."
+        )
+    except Exception as e:
+        click.echo(
+            f"Failed to delete transformations for example {ToolGlobals.example}. They may not exist."
+        )
+        ToolGlobals.failed = True
+        return
+
+
 def delete_datamodel(instances_only=True) -> None:
     """Delete data model from CDF based on the data model in the example
 
@@ -154,18 +176,13 @@ def delete_datamodel(instances_only=True) -> None:
     delete these, and then delete the containers and views, before finally deleting the
     data model itself.
     """
-    try:
-        client = ToolGlobals.verify_client(
-            capabilities={
-                "dataModelsAcl": ["READ", "WRITE"],
-                "dataModelInstancesAcl": ["READ", "WRITE"],
-            }
-        )
-    except Exception as e:
-        click.echo(f"Failed to verify client for example {ToolGlobals.example}")
-        click.echo(e)
-        ToolGlobals.failed = True
-        return
+
+    client = ToolGlobals.verify_client(
+        capabilities={
+            "dataModelsAcl": ["READ", "WRITE"],
+            "dataModelInstancesAcl": ["READ", "WRITE"],
+        }
+    )
     space_name = ToolGlobals.config("model_space")
     model_name = ToolGlobals.config("data_model")
     try:
