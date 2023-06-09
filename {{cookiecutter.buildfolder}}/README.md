@@ -59,7 +59,20 @@ examples.
     poetry install
     ```
 
-5. Authenticate with the data modeling cli tool:
+## Load the data
+
+**Once you have installed pre-requisites, you can do the super-fast bootstrap of the dataset by running:**
+
+```bash
+./clean_and_load.sh <example>
+```
+
+This script will drop all data (if present), re-load everything, and then run the transformations to get data into
+your data model.
+
+Or, you can do the steps one by one (you can also look at the `./clean_and_load.sh` script):
+
+1. Authenticate with the data modeling cli tool:
 
     ```bash
     ./cdf-login.sh
@@ -70,7 +83,7 @@ examples.
 
     Note that the load_data.py script will test if it has correct permission and give you an error.
 
-6. Load the environment variables from the .env file in the build folder:
+1. Load the environment variables from the .env file in the build folder:
 
     ```bash
     cd build
@@ -79,7 +92,7 @@ examples.
 
     This is necessary for the python scripts (also transformations-cli tools if you use it) to find the correct credentials.
 
-7. To load the data set, use `load_data.py` script (if you use poetry, remember to run `poetry shell` first)
+1. To load the data set, use `load_data.py` script (if you use poetry, remember to run `poetry shell` first)
 
     Run `./load_data.py --help` to see the options.
 
@@ -94,7 +107,7 @@ examples.
 
     *This command will also default load the transformations in the example directory. You can also use the transformations-cli tool to load the transformations (and more). The environment variables needed for transformations are already set.*
 
-8. Load the data model
+1. Load the data model
 
     To load the data model for a specific example, run:
 
@@ -102,7 +115,7 @@ examples.
     ./<example_dir>/load_datamodel.sh
     ```
 
-9. Run the transformations
+1. Run the transformations
 
     To run the transformations for a specific example, run:
 
@@ -113,7 +126,7 @@ examples.
     This will run all the transformations in the example folder. If you want to run a specific
     transformation, you can specify `--file name-of-transformation.yaml` as an option.
 
-10. Look at the README.md in each `./example/*` folder. It will tell you if there are more example-specific options.
+1. Look at the README.md in each `./example/*` folder. It will tell you if there are more example-specific options.
 
 ## About the examples
 
