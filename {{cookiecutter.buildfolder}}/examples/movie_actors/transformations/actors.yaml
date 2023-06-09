@@ -4,7 +4,11 @@ name: tutorial-Actors
 query: >-
   /* MAPPING_MODE_ENABLED: true */
 
-  /* {"version":1,"sourceType":"raw","mappings":[{"from":"name","to":"externalId","asType":"STRING"},{"from":"name","to":"name","asType":"STRING"},{"from":"","to":"age"},{"from":"","to":"didWinOscar"}],"sourceLevel1":"{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"actors"} */
+  /* {"version":1,"sourceType":"raw","mappings":[
+  {"from":"name","to":"externalId","asType":"STRING"},
+  {"from":"name","to":"name","asType":"STRING"},
+  {"from":"","to":"age"},{"from":"","to":"didWinOscar"}],
+  "sourceLevel1":"{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"actors"} */
 
   select
     cast(`name` as STRING) as externalId,
@@ -12,12 +16,13 @@ query: >-
   from
     `{{cookiecutter.movie_actors_raw_db}}`.`actors`;
 destination:
-  view:
+  dataModel:
     space: {{cookiecutter.movie_actors_space}}
-    externalId: Actor
+    externalId: {{cookiecutter.movie_actors_datamodel}}
+    destinationType: Actor
     version: "1"
   instanceSpace: {{cookiecutter.movie_actors_space}}
-  type: nodes
+  type: instances
 ignoreNullFields: true
 shared: true
 action: upsert

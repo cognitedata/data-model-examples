@@ -87,7 +87,7 @@ def delete_files() -> None:
         return
     files = []
     # Pick up all the files in the files folder of the example.
-    for _, _, filenames in os.walk(f"./{ToolGlobals.example}/data/files"):
+    for _, _, filenames in os.walk(f"./examples/{ToolGlobals.example}/data/files"):
         for f in filenames:
             files.append(ToolGlobals.example + "_" + f)
     if len(files) == 0:
@@ -116,14 +116,18 @@ def delete_timeseries() -> None:
     )
     files = []
     # Pick up all the .json files in the data folder of the example.
-    for _, _, filenames in os.walk(f"./{ToolGlobals.example}/data/timeseries/"):
+    for _, _, filenames in os.walk(
+        f"./examples/{ToolGlobals.example}/data/timeseries/"
+    ):
         for f in filenames:
             if ".json" in f:
                 files.append(f)
     # Read timeseries metadata to build a list of TimeSeries
     timeseries: list[TimeSeries] = []
     for f in files:
-        with open(f"./{ToolGlobals.example}/data/timeseries/{f}", "rt") as file:
+        with open(
+            f"./examples/{ToolGlobals.example}/data/timeseries/{f}", "rt"
+        ) as file:
             ts = json.load(file)
             for t in ts:
                 timeseries.append(TimeSeries._load(t))
@@ -152,7 +156,9 @@ def delete_transformations() -> None:
     client = ToolGlobals.verify_client(
         capabilities={"transformationsAcl": ["READ", "WRITE"]}
     )
-    configs = parse_transformation_configs(f"./{ToolGlobals.example}/transformations/")
+    configs = parse_transformation_configs(
+        f"./examples/{ToolGlobals.example}/transformations/"
+    )
     transformations_ext_ids = [t.external_id for t in configs.values()]
     try:
         client.transformations.delete(external_id=transformations_ext_ids)

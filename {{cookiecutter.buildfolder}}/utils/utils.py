@@ -40,7 +40,11 @@ class CDFToolConfig:
     These values are used by the python scripts.
     """
 
-    def __init__(self, config: dict | None = None) -> None:
+    def __init__(
+        self,
+        client_name: str = "Generic Cognite examples library",
+        config: dict | None = None,
+    ) -> None:
         self._data_set_id: int = 0
         self._example = None
         self._failed = False
@@ -59,7 +63,7 @@ class CDFToolConfig:
 
         self._client = CogniteClient(
             ClientConfig(
-                client_name="Cognite examples library 0.1.0",
+                client_name=client_name,
                 base_url=os.environ["CDF_URL"],
                 project=os.environ["CDF_PROJECT"],
                 credentials=OAuthClientCredentials(

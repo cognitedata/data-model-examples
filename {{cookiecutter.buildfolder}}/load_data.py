@@ -103,7 +103,7 @@ def load_raw(file: str, drop: bool) -> None:
         files.append(file)
     else:
         # Pick up all the .csv files in the data folder of the example.
-        for _, _, filenames in os.walk(f"./{ToolGlobals.example}/data/raw"):
+        for _, _, filenames in os.walk(f"./examples/{ToolGlobals.example}/data/raw"):
             for f in filenames:
                 if ".csv" in f:
                     files.append(f)
@@ -111,7 +111,7 @@ def load_raw(file: str, drop: bool) -> None:
         return
     click.echo(f"Uploading {len(files)} .csv files to {raw_db} RAW database...")
     for f in files:
-        with open(f"./{ToolGlobals.example}/data/raw/{f}", "rt") as file:
+        with open(f"./examples/{ToolGlobals.example}/data/raw/{f}", "rt") as file:
             dataframe = pd.read_csv(file, dtype=str)
             dataframe = dataframe.fillna("")
             try:
@@ -139,7 +139,9 @@ def load_files(file: str, drop: bool) -> None:
             files.append(file)
         else:
             # Pick up all the files in the files folder of the example.
-            for _, _, filenames in os.walk(f"./{ToolGlobals.example}/data/files"):
+            for _, _, filenames in os.walk(
+                f"./examples/{ToolGlobals.example}/data/files"
+            ):
                 for f in filenames:
                     files.append(f)
         if len(files) == 0:
@@ -147,14 +149,14 @@ def load_files(file: str, drop: bool) -> None:
         click.echo(f"Uploading {len(files)} files/documents to CDF...")
         for f in files:
             client.files.upload(
-                path=f"./{ToolGlobals.example}/data/files/{f}",
+                path=f"./examples/{ToolGlobals.example}/data/files/{f}",
                 data_set_id=ToolGlobals.data_set_id,
                 name=f,
                 external_id=ToolGlobals.example + "_" + f,
                 overwrite=drop,
             )
         click.echo(
-            f"Uploaded successfully {len(files)} files/documents from ./{ToolGlobals.example}/data/files"
+            f"Uploaded successfully {len(files)} files/documents from example {ToolGlobals.example}"
         )
     except Exception as e:
         click.echo(f"Failed to upload files for example {ToolGlobals.example}")
@@ -178,14 +180,18 @@ def load_timeseries_metadata(file: str, drop: bool) -> None:
         files.append(file)
     else:
         # Pick up all the .json files in the data folder of the example.
-        for _, _, filenames in os.walk(f"./{ToolGlobals.example}/data/timeseries/"):
+        for _, _, filenames in os.walk(
+            f"./examples/{ToolGlobals.example}/data/timeseries/"
+        ):
             for f in filenames:
                 if ".json" in f:
                     files.append(f)
     # Read timeseries metadata
     timeseries: list[TimeSeries] = []
     for f in files:
-        with open(f"./{ToolGlobals.example}/data/timeseries/{f}", "rt") as file:
+        with open(
+            f"./examples/{ToolGlobals.example}/data/timeseries/{f}", "rt"
+        ) as file:
             ts = json.load(file)
             for t in ts:
                 timeseries.append(TimeSeries._load(t))
@@ -228,7 +234,7 @@ def load_timeseries_datapoints(file: str) -> None:
     else:
         # Pick up all the .csv files in the data folder of the example.
         for _, _, filenames in os.walk(
-            f"./{ToolGlobals.example}/data/timeseries/datapoints/"
+            f"./examples/{ToolGlobals.example}/data/timeseries/datapoints/"
         ):
             for f in filenames:
                 if ".csv" in f:
@@ -241,7 +247,7 @@ def load_timeseries_datapoints(file: str) -> None:
     try:
         for f in files:
             with open(
-                f"./{ToolGlobals.example}/data/timeseries/datapoints/{f}", "rt"
+                f"./examples/{ToolGlobals.example}/data/timeseries/datapoints/{f}", "rt"
             ) as file:
                 dataframe = pd.read_csv(file, parse_dates=True, index_col=0)
             click.echo(f"Uploading {f} as datapoints to CDF timeseries...")
@@ -263,16 +269,16 @@ def load_transformations(file: str, drop: bool) -> None:
     tmp = ""
     if file:
         # Only load the supplied filename.
-        os.mkdir(f"./{ToolGlobals.example}/transformations/tmp")
+        os.mkdir(f"./examples/{ToolGlobals.example}/transformations/tmp")
         os.system(
-            f"cp ./{ToolGlobals.example}/transformations/{file} ./{ToolGlobals.example}/transformations/tmp/"
+            f"cp ./examples/{ToolGlobals.example}/transformations/{file} ./examples/{ToolGlobals.example}/transformations/tmp/"
         )
         tmp = "tmp/"
     configs = parse_transformation_configs(
-        f"./{ToolGlobals.example}/transformations/" + tmp + tmp
+        f"./examples/{ToolGlobals.example}/transformations/" + tmp + tmp
     )
     if len(tmp) > 0:
-        os.system(f"rm -rf ./{ToolGlobals.example}/transformations/tmp")
+        os.system(f"rm -rf ./examples/{ToolGlobals.example}/transformations/tmp")
     cluster = os.environ.get("CDF_CLUSTER", "westeurope-1")
     transformations = [
         to_transformation(client, conf_path, configs[conf_path], cluster)

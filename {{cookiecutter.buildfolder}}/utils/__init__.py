@@ -7,6 +7,8 @@ from .utils import CDFToolConfig
 """
 
 logger = logging.getLogger(__name__)
+# TODO Change this to a name for your client
+client_name = "Cognite examples library"
 
 gettrace = sys.gettrace()
 debug_status = True if gettrace else False
@@ -19,7 +21,8 @@ if debug_status:
     # Override...
     load_dotenv("../.env")
     ToolGlobals = CDFToolConfig(
-        {
+        client_name=client_name,
+        config={
             "movie_actors": {
                 "raw_db": "test_movies",
                 "data_set": "tutorial_movies_dataset",
@@ -32,8 +35,8 @@ if debug_status:
                 "model_space": "tutorial_apm_simple",
                 "data_model": "tutorial_apm_simple",
             },
-        }
+        },
     )
 else:
     # ToolGlobals is a singleton that is loaded once as this is a python module
-    ToolGlobals = CDFToolConfig()
+    ToolGlobals = CDFToolConfig(client_name=client_name)
