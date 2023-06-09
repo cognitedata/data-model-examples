@@ -25,7 +25,7 @@ if __name__ == "__main__":
         capabilities={"transformationsAcl": ["READ", "WRITE"]}
     )
     configs = parse_transformation_configs(
-        f"../build/{ToolGlobals.example}/transformations/"
+        f"./examples/{ToolGlobals.example}/transformations/"
     )
     transformations_ext_ids = [t.external_id for t in configs.values()]
     try:
