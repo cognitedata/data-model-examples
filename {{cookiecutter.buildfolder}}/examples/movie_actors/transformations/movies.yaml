@@ -4,10 +4,20 @@ name: tutorial-Movies
 query: >-
   /* MAPPING_MODE_ENABLED: true */
 
-  /* {"version":1,"sourceType":"raw","mappings":[{"from":"Movie_Name","to":"externalId","asType":"STRING"},{"from":"Movie_Name","to":"name","asType":"STRING"},{"from":"Description","to":"description","asType":"STRING"},{"from":"Run_time","to":"runTime","asType":"INT"},{"from":"Gross_USD","to":"gross","asType":"INT"},{"from":"Director","to":"director","asType":"STRUCT<STRING:STRING>"},{"from":"IMDB_Rating","to":"imdbRating","asType":"DOUBLE"},{"from":"Released_Year","to":"releasedYear","asType":"INT"},{"from":"","to":"watchedIt"}],"sourceLevel1":"{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"movies"} */
+  /* {"version":1,"sourceType":"raw","mappings":[
+  {"from":"Movie_Name","to":"externalId","asType":"STRING"},
+  {"from":"Movie_Name","to":"name","asType":"STRING"},
+  {"from":"Description","to":"description","asType":"STRING"},
+  {"from":"Run_time","to":"runTime","asType":"INT"},
+  {"from":"Gross_USD","to":"gross","asType":"INT"},
+  {"from":"Director","to":"director","asType":"STRUCT<STRING:STRING>"},
+  {"from":"IMDB_Rating","to":"imdbRating","asType":"DOUBLE"},
+  {"from":"Released_Year","to":"releasedYear","asType":"INT"},
+  {"from":"","to":"watchedIt"}],
+  "sourceLevel1":"{{cookiecutter.movie_actors_raw_db}}","sourceLevel2":"movies"} */
 
   select
-    cast(`Movie_Name` as STRING) as externalId,
+    cast(`id` as STRING) as externalId,
     cast(`Movie_Name` as STRING) as name,
     cast(`Description` as STRING) as description,
     cast(`Run_time` as INT) as runTime,
@@ -18,12 +28,13 @@ query: >-
   from
     `{{cookiecutter.movie_actors_raw_db}}`.`movies`;
 destination:
-  view:
+  dataModel:
     space: {{cookiecutter.movie_actors_space}}
-    externalId: Movie
+    externalId: {{cookiecutter.movie_actors_datamodel}}
+    destinationType: Movie
     version: "1"
   instanceSpace: {{cookiecutter.movie_actors_space}}
-  type: nodes
+  type: instances
 ignoreNullFields: true
 shared: true
 action: upsert
