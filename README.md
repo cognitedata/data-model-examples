@@ -2,8 +2,11 @@
 
 This repository contains examples of how to work with data models in Cognite Data Fusion.
 
-The code is licensed under [Apache](LICENSE.code.md)[ License 2.0](LICENSE.code.md)](LICENSE.code.md), while the documentation and methods are licensed
-under [Creative Commons](LICENSE.docs.md). Each of the example datasets has its own license,
+See [Changelog](./CHANGELOG.md) for recent changes.
+
+The code is licensed under the [Apache License 2.0](LICENSE.code.md), while the documentation and methods are licensed
+under [Creative Commons](LICENSE.docs.md). Each of the example data sets have their own license,
+
 see the LICENSE.dataset.md in each examples directory.
 
 ## Set up the CDF project and get credentials

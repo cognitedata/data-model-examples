@@ -42,9 +42,11 @@ The structure should be the following under the `examples/` directory:
 
 5. You should be good to go. Run `cookiecutter .` to generate the build directory, now with your example.
 
-6. Once it's working, open a Pull Request on this repo.
+6. Update the [Changelog](./CHANGELOG.md)
 
-7. Thanks a lot!!!
+7. Once it's working, open a Pull Request on this repo.
+
+8. Thanks a lot!!!
 
 ## Debugging python scripts
 
