@@ -19,7 +19,7 @@ Below is a snippet from the Cognite Hub website describing the data:
 
 ## Investigation into operational states of a compressor
 
-The jupyter notebook will show you how to query the data model using the Cognite Python SDK. The time series loaded in the data set are used to explore
+The Jupyter notebook will show you how to query the data model using the Cognite Python SDK. The time series loaded in the data set are used to explore
 various modes of operation for a compressor on Valhall.
 
 See [Valhall Operational States 2.ipynb](./Valhall%20Operational%20States%202.ipynb)
