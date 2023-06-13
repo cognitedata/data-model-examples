@@ -1,9 +1,9 @@
 # Cognite Data Fusion Data Model Examples
 
-This repository contains examples on how to work with data models in Cognite Data Fusion.
+This repository contains examples of how to work with data models in Cognite Data Fusion.
 
-The code is licensed under the [Apache License 2.0](LICENSE.code.md), while the documentation and methods are licensed
-under [Creative Commons](LICENSE.docs.md). Each of the example data sets have their own license,
+The code is licensed under [Apache](LICENSE.code.md)[ License 2.0](LICENSE.code.md)](LICENSE.code.md), while the documentation and methods are licensed
+under [Creative Commons](LICENSE.docs.md). Each of the example datasets has its own license,
 see the LICENSE.dataset.md in each examples directory.
 
 ## Set up the CDF project and get credentials
@@ -13,7 +13,7 @@ through a CDF access group (see below for needed permissions). You get the CDF p
 <support@cognite.com> and you configure the service principal/account in the identity provider (e.g. Azure Active Directory)
 that the CDF project has been configured to use.**
 
-See the python SDK [intro doc](https://developer.cognite.com/dev/guides/sdk/python/python_auth_oidc/) for how to get the credentials.
+See the Python SDK [intro doc](https://developer.cognite.com/dev/guides/sdk/python/python_auth_oidc/) for how to get the credentials.
 
 See [README.me](./{{cookiecutter.buildfolder}}/README.md) for details on permissions needed.
 
@@ -29,7 +29,7 @@ cookiecutter https://github.com/cognitedata/data-model-examples.git
 You will be prompted to supply your credentials for a CDF project (you need client credentials, so a client
 id and a client secret).
 
-The minimum you need to configure are the following (IDP = Identity Provider, typically Azure Active Directory):
+The minimum you need to configure is the following (IDP = Identity Provider, typically Azure Active Directory):
 
 * CDF_CLUSTER (the prefix before cognitedata.com)
 * CDF_PROJECT (your CDF project name)
@@ -40,7 +40,7 @@ The minimum you need to configure are the following (IDP = Identity Provider, ty
 The remaining configurations are optional, but you will be prompted for them, so just press enter if you do not
 need to change them.
 
-**The prefix tells you were you get the information from: CDF_* is for your CDF project, while IDP_* is from your
+**The prefix tells you where you get the information from: CDF_* is for your CDF project, while IDP_* is for your
 identity provider.**
 
 You will get a `./build` folder (unless you change the default) that contains the examples configured and ready

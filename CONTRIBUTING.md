@@ -8,7 +8,7 @@ Cookiecutter will store config files for you in `~/.cookiecutter`.
 ## The structure of an example
 
 Each example should have a README.md file that introduces the data set and how
-to use it. You should also include a LICENSE.dataset.md file to clearly articlate the terms
+to use it. You should also include a LICENSE.dataset.md file to clearly articulate the terms
 the data set is licensed under.
 
 You can use `./examples/apm_simple/` directory as a reference for how to set up your own example.
@@ -17,14 +17,14 @@ The structure should be the following under the `examples/` directory:
 * make a folder with the name of the example. This name is used throughout as a reference for
     the example.
 * put all the data in the `data` directory with each data type in a sub-directory.
-* yaml config files for transformations should be in the `transformations` directory
-* a datamodel.graphql file with the CDF data model to load should be in the root
+* YAML config files for transformations should be in the `transformations` directory
+* a `datamodel.graphql` file with the CDF data model to load should be in the root
     of the example directory
 * Copy and adapt the scripts in e.g. `apm_simple` directory.
 
 ## To add a new example
 
-1. Follow the structure of the existing ones and add a new in a separate directory.
+1. Follow the structure of the existing ones and add a new one in a separate directory.
 2. Edit the cookiecutter.json file to add the defaults for your example:
 
     ```json
@@ -49,7 +49,7 @@ The structure should be the following under the `examples/` directory:
 ## Debugging python scripts
 
 The cookiecutter template variables can make it harder to debug. To simplify debugging of
-python scripts and allow you to debug the files (like load_data.py) directly in an IDE,
+Python scripts and allow you to debug the files (like load_data.py) directly in an IDE,
 do the following:
 
 1. Copy your own .env file into the **root folder** of this repo (where this file lives).
