@@ -28,7 +28,7 @@ The structure should be the following under the `examples/` directory:
 2. Edit the cookiecutter.json file to add the defaults for your example:
 
     ```json
-    "apm_simple_raw_db": "tutorial_oid",
+    "apm_simple_raw_db": "tutorial_apm",
     "apm_simple_datamodel": "tutorial_apm_simple",
     "apm_simple_space": "tutorial_apm_simple",
     "apm_simple_data_set": "Valhall_System_23",
