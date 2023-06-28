@@ -28,8 +28,9 @@
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
                 "apm_simple",
+                "--dry-run-dm",
                 "--delete",
-                "transformations" //"raw,timeseries,files,datamodel"
+                "datamodel" //"raw,timeseries,files,datamodel"
             ],
             "console": "integratedTerminal",
             "justMyCode": false
