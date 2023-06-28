@@ -242,7 +242,7 @@ def delete_datamodel(instances_only=True, dry_run=False) -> None:
         click.echo(
             f"Found {node_count} nodes and deleted {node_delete} nodes from {id} in {model_name}."
         )
-    # Get all edges in the space
+    # Find any remaining edges in the space
     # Iterate over all the edges in the view 1,000 at the time
     edge_count = 0
     edge_delete = 0
@@ -270,38 +270,26 @@ def delete_datamodel(instances_only=True, dry_run=False) -> None:
         ToolGlobals.failed = True
         return
     container_list = [(space_name, c.external_id) for c in containers.data]
-    for _, id in container_list:
-        query = {
-            "with": {
-                id: {
-                    "nodes": {
-                        "filter": {
-                            "hasData": [
-                                {
-                                    "type": "container",
-                                    "space": ToolGlobals.config("model_space"),
-                                    "externalId": id,
-                                }
-                            ]
-                        },
-                    },
-                    "limit": 1000,
-                }
-            },
-            "select": {id: {}},
-        }
-        try:
-            nodes = client.post(
-                "/api/v1/projects/" + client.config.project + "/models/instances/query",
-                json=query,
-            ).json()
-        except Exception as e:
-            continue
-        if len(nodes.get("items", {}).get(id, [])) > 0:
-            click.echo(
-                f"ERROR! Found {len(nodes)} remaining nodes in the container: {id}"
-            )
-            ToolGlobals.failed = True
+    click.echo(
+        f"Found {len(container_list)} containers in the space {space_name} for example {ToolGlobals.example}"
+    )
+    # Find any remaining nodes in the space
+    node_count = 0
+    node_delete = 0
+    for instance_list in client.data_modeling.instances(
+        instance_type="node",
+        include_typing=False,
+        filter={"equals": {"property": ["node", "space"], "value": space_name}},
+        chunk_size=1000,
+    ):
+        instances = [(space_name, i.external_id) for i in instance_list.data]
+        if not dry_run:
+            ret = client.data_modeling.instances.delete(instances)
+            node_delete += len(ret.nodes)
+        node_count += len(instance_list)
+    click.echo(
+        f"ERROR!!! Found {node_count} nodes and deleted {node_delete} nodes from {space_name}."
+    )
     if instances_only:
         return
     try:
@@ -311,14 +299,35 @@ def delete_datamodel(instances_only=True, dry_run=False) -> None:
             click.echo(
                 f"Deleted {len(container_list)} containers in data model {model_name}."
             )
+    except Exception as e:
+        click.echo(
+            f"Failed to delete containers in {space_name} for example {ToolGlobals.example}"
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+    try:
         if len(view_list) > 0:
             if not dry_run:
                 client.data_modeling.views.delete(view_list)
             click.echo(f"Deleted {len(view_list)} views in data model {model_name}.")
+    except Exception as e:
+        click.echo(
+            f"Failed to delete views in {space_name} for example {ToolGlobals.example}"
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+    try:
         if len(container_list) > 0 or len(view_list) > 0:
             if not dry_run:
                 client.data_modeling.data_models.delete((space_name, model_name, "1"))
             click.echo(f"Deleted the data model {model_name}.")
+    except Exception as e:
+        click.echo(
+            f"Failed to delete data model in {space_name} for example {ToolGlobals.example}"
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+    try:
         space = client.data_modeling.spaces.retrieve(space_name)
         if space is not None:
             if not dry_run:
@@ -326,11 +335,10 @@ def delete_datamodel(instances_only=True, dry_run=False) -> None:
             click.echo(f"Deleted the space {space_name}.")
     except Exception as e:
         click.echo(
-            f"Failed to delete containers, views, data model {model_name}, or space for example {ToolGlobals.example}"
+            f"Failed to delete space {space_name} for example {ToolGlobals.example}"
         )
         click.echo(e)
         ToolGlobals.failed = True
-        return
 
 
 if __name__ == "__main__":
