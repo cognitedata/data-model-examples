@@ -8,7 +8,7 @@ directory.
 
 ## KNOWN ISSUES
 
-* All data except the data model can be loaded using the Python scripts. The data model requires the CDF CLI tool to be installed (using NPM) and executed as shell commands.
+* N/A
 
 ## Set up the CDF project and get credentials
 
@@ -34,20 +34,12 @@ the examples you want to run or use the same data set for all examples):
 Each of the folders with examples has a README.md with more details, but you will need some prerequisites installed for all
 examples.
 
-1. Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and
-    [pip](https://packaging.python.org/en/latest/tutorials/installing-packages/) if you do not already have them.
+1. Install Python and [pip](https://packaging.python.org/en/latest/tutorials/installing-packages/)
+    if you do not already have them.
 
-2. Change directory into the `./build` folder
+1. Change directory into the `./build` folder
 
-3. Install the data modeling CLI tool:
-
-    ```bash
-    sudo npm install -g @cognite/cdf-cli
-    ```
-
-    Alternatively, run without `sudo` and add `~/.npm/bin` to your `PATH` environment variable.
-
-4. Install the Python requirements (or use poetry if you prefer that package manager):
+1. Install the Python requirements (or use poetry if you prefer that package manager):
 
     ```bash
     pip install -r requirements.txt
@@ -67,21 +59,10 @@ examples.
 ./clean_and_load.sh <example>
 ```
 
-This script will drop all data (if present), re-load everything, and then run the transformations to get data into
-your data model.
+This script will drop all data (if present), re-load everything, and then run the transformations to
+get data into your data model.
 
 Or, you can do the steps one by one (you can also look at the `./clean_and_load.sh` script):
-
-1. Authenticate with the data modeling CLI tool:
-
-    ```bash
-    ./cdf-login.sh
-    ```
-
-    This will try to log you into your CDF project with the credentials from the .env file. It will also try to list the transformations this
-    client has access to.
-
-    Note that the load_data.py script will test if it has correct permission and give you an error.
 
 1. Load the environment variables from the .env file in the build folder:
 
@@ -99,21 +80,13 @@ Or, you can do the steps one by one (you can also look at the `./clean_and_load.
     If you want to load all the data in the apm_simple data set, run:
 
     ```bash
-    ./load_data.py --drop true apm_simple
+    ./load_data.py --drop apm_simple
     ```
 
-    Adding `--drop true` will delete all the data that can be deleted before
+    Adding `--drop` will delete all the data that can be deleted before
     loading the data fresh. **Please note that CDF datasets cannot be deleted, they will be empty after a delete!!**
 
     *This command will also default load the transformations in the example directory. You can also use the transformations-cli tool to load the transformations (and more). The environment variables needed for transformations are already set.*
-
-1. Load the data model
-
-    To load the data model for a specific example, run:
-
-    ```bash
-    ./<example_dir>/load_datamodel.sh
-    ```
 
 1. Run the transformations
 
@@ -127,6 +100,22 @@ Or, you can do the steps one by one (you can also look at the `./clean_and_load.
     transformation, you can specify `--file name-of-transformation.yaml` as an option.
 
 1. Look at the README.md in each `./example/*` folder. It will tell you if there are more example-specific options.
+
+## Structure of each example
+
+In the `./examples` directory, you will find the following:
+
+* `LICENSE.dataset.md`: The license for the data set.
+* `README.md`: More details about the data set.
+* `requirements.txt/pyproject.toml`: if there are any additional requirements for using the data set (not
+    for loading the data set, that is handled by the `requirements.txt` in the build folder).
+* `data/` directory with files, raw, and timeseries that are loaded by load_data.py.
+* `transformations/` directory with transformations definitions (YAML files) that are loaded by
+    load_data.py.
+* `data_model/` directory with data model definitions (json files) that are loaded by load_data.py
+    using the Python SDK (and the /model/ REST APIs).
+* `datamodel.graphql`: the graphql schema for the data model that you can load info CDF from the
+    CDF UI.
 
 ## About the examples
 
