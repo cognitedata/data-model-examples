@@ -112,7 +112,7 @@ class CDFToolConfig:
     def example(self, value: str):
         if value is None or value not in self._config:
             raise ValueError(
-                "example must be set to one of the values in the _config inventory in CDFToolConfig()."
+                "example must be set to one of the values in the inventory.json file used by CDFToolConfig()."
             )
         self._example = value
         # Since we now have a new configuration, check the dataset and set the id
