@@ -115,7 +115,35 @@ In the `./examples` directory, you will find the following:
 * `data_model/` directory with data model definitions (json files) that are loaded by load_data.py
     using the Python SDK (and the /model/ REST APIs).
 * `datamodel.graphql`: the graphql schema for the data model that you can load info CDF from the
-    CDF UI.
+    CDF UI. This schema file can also be used by the CDF CLI tool for data models (see below).
+
+### Data Modeling CLI tool
+
+You can install the cdf-cli tool for data models from npm:
+
+```bash
+sudo npm install -g @cognite/cdf-cli
+```
+
+Alternatively, run without `sudo` and add `~/.npm/bin` to your `PATH` environment variable.
+
+You can then log into the tool:
+
+```bash
+set -a 
+source ./.env
+set +a
+echo "Logging into CDF using environment variables from .env..."
+cdf login --client-id=$IDP_CLIENT_ID --client-secret=$IDP_CLIENT_SECRET --tenant=$IDP_TENANT_ID --cluster=$CDF_CLUSTER $CDF_PROJECT
+cdf status
+```
+
+And then load the data model:
+
+```bash
+cdf dm create --interactive false --external-id data_model_name --space space_name data_model_name
+cdf dm publish --interactive false --external-id data_model_name --space space_name --version 1 --file ./examples/<example>/datamodel.graphql
+```
 
 ## About the examples
 
