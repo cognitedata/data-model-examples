@@ -26,7 +26,7 @@ import pandas as pd
 
 @click.command()
 @click.option(
-    "--dry-run-dm",
+    "--dry-run",
     default=False,
     is_flag=True,
     help="Do not delete anything for data models, just simulate",
@@ -37,28 +37,30 @@ import pandas as pd
     help="Specify which data you want to delete. Default raw,timeseries,files,transformations,datamodel(all), instances.",
 )
 @click.argument("example_folder")
-def cli(delete: str, example_folder: str, dry_run_dm: bool):
+def cli(delete: str, example_folder: str, dry_run: bool):
     # Configure the ToolGlobals singleton with the example folder
     # It will then pick up the right configuration from the inventory.json file
     ToolGlobals.example = example_folder
+    if dry_run:
+        click.echo("DRY RUN: no deletions will be done...")
     if "raw" in delete:
-        delete_raw()
+        delete_raw(dry_run=dry_run)
     if "files" in delete:
-        delete_files()
+        delete_files(dry_run=dry_run)
     if "timeseries" in delete:
-        delete_timeseries()
+        delete_timeseries(dry_run=dry_run)
     if "transformations" in delete:
-        delete_transformations()
+        delete_transformations(dry_run=dry_run)
     if "instances" in delete and "datamodel" not in delete:
-        delete_datamodel(instances_only=True)
+        delete_datamodel(instances_only=True, dry_run=dry_run)
     if "datamodel" in delete:
-        delete_datamodel(instances_only=False, dry_run=dry_run_dm)
-    if ToolGlobals.failed and not dry_run_dm:
+        delete_datamodel(instances_only=False, dry_run=dry_run)
+    if ToolGlobals.failed and not dry_run:
         click.echo(f"Failure to delete as expected.")
         exit(1)
 
 
-def delete_raw() -> None:
+def delete_raw(dry_run=False) -> None:
     """Delete raw data from CDF raw based om csv files in the example"""
     client = ToolGlobals.verify_client(capabilities={"rawAcl": ["READ", "WRITE"]})
     # The name of the raw database to create is picked up from the inventory.py file, which
@@ -74,8 +76,10 @@ def delete_raw() -> None:
         tables = client.raw.tables.list(raw_db)
         if len(tables) > 0:
             for table in tables:
-                client.raw.tables.delete(raw_db, table.name)
-        client.raw.databases.delete(raw_db)
+                if not dry_run:
+                    client.raw.tables.delete(raw_db, table.name)
+        if not dry_run:
+            client.raw.databases.delete(raw_db)
         click.echo(f"Deleted {raw_db} for example {ToolGlobals.example}.")
     except:
         click.echo(
@@ -84,7 +88,7 @@ def delete_raw() -> None:
         ToolGlobals.failed = True
 
 
-def delete_files() -> None:
+def delete_files(dry_run=False) -> None:
     try:
         client = ToolGlobals.verify_client(capabilities={"filesAcl": ["READ", "WRITE"]})
     except Exception as e:
@@ -102,7 +106,8 @@ def delete_files() -> None:
     count = 0
     for f in files:
         try:
-            client.files.delete(external_id=f)
+            if not dry_run:
+                client.files.delete(external_id=f)
             count += 1
         except Exception as e:
             pass
@@ -115,7 +120,7 @@ def delete_files() -> None:
     ToolGlobals.failed = True
 
 
-def delete_timeseries() -> None:
+def delete_timeseries(dry_run=False) -> None:
     """Delete timeseries from CDF based on json files in the example"""
 
     client = ToolGlobals.verify_client(
@@ -146,7 +151,8 @@ def delete_timeseries() -> None:
     count = 0
     for e_id in drop_ts:
         try:
-            client.time_series.delete(external_id=e_id, ignore_unknown_ids=False)
+            if not dry_run:
+                client.time_series.delete(external_id=e_id, ignore_unknown_ids=False)
             count += 1
         except Exception as e:
             pass
@@ -159,7 +165,7 @@ def delete_timeseries() -> None:
         ToolGlobals.failed = True
 
 
-def delete_transformations() -> None:
+def delete_transformations(dry_run=False) -> None:
     client = ToolGlobals.verify_client(
         capabilities={"transformationsAcl": ["READ", "WRITE"]}
     )
@@ -168,7 +174,8 @@ def delete_transformations() -> None:
     )
     transformations_ext_ids = [t.external_id for t in configs.values()]
     try:
-        client.transformations.delete(external_id=transformations_ext_ids)
+        if not dry_run:
+            client.transformations.delete(external_id=transformations_ext_ids)
         click.echo(
             f"Deleted {len(transformations_ext_ids)} transformations for example {ToolGlobals.example}."
         )
@@ -190,8 +197,6 @@ def delete_datamodel(instances_only=True, dry_run=False) -> None:
     data model itself.
     """
 
-    if dry_run:
-        click.echo("Dry run: no deletions will be done...")
     client = ToolGlobals.verify_client(
         capabilities={
             "dataModelsAcl": ["READ", "WRITE"],
@@ -222,7 +227,27 @@ def delete_datamodel(instances_only=True, dry_run=False) -> None:
             (space_name, d.external_id, d.version) for d in data_model.data[0].views
         ]
     click.echo(f"Found {len(view_list)} views in the data model: {model_name}")
-
+    # It's best practice to delete edges first as edges are deleted when nodes are deleted,
+    # but this cascading delete is more expensive than deleting the edges directly.
+    #
+    # Find any edges in the space
+    # Iterate over all the edges in the view 1,000 at the time
+    edge_count = 0
+    edge_delete = 0
+    for instance_list in client.data_modeling.instances(
+        instance_type="edge",
+        include_typing=False,
+        filter={"equals": {"property": ["edge", "space"], "value": space_name}},
+        chunk_size=1000,
+    ):
+        instances = [(space_name, i.external_id) for i in instance_list.data]
+        if not dry_run:
+            ret = client.data_modeling.instances.delete(edges=instances)
+            edge_delete += len(ret.edges)
+        edge_count += len(instance_list)
+    click.echo(
+        f"Found {edge_count} edges and deleted {edge_delete} edges from space {space_name}."
+    )
     # For all the views in this data model...
     for _, id, version in view_list:
         node_count = 0
@@ -236,30 +261,12 @@ def delete_datamodel(instances_only=True, dry_run=False) -> None:
         ):
             instances = [(space_name, i.external_id) for i in instance_list.data]
             if not dry_run:
-                ret = client.data_modeling.instances.delete(instances)
+                ret = client.data_modeling.instances.delete(nodes=instances)
                 node_delete += len(ret.nodes)
             node_count += len(instance_list)
         click.echo(
             f"Found {node_count} nodes and deleted {node_delete} nodes from {id} in {model_name}."
         )
-    # Find any remaining edges in the space
-    # Iterate over all the edges in the view 1,000 at the time
-    edge_count = 0
-    edge_delete = 0
-    for instance_list in client.data_modeling.instances(
-        instance_type="edge",
-        include_typing=False,
-        filter={"equals": {"property": ["edge", "space"], "value": space_name}},
-        chunk_size=1000,
-    ):
-        instances = [(space_name, i.external_id) for i in instance_list.data]
-        if not dry_run:
-            ret = client.data_modeling.instances.delete(instances)
-            edge_delete += len(ret.edges)
-        edge_count += len(instance_list)
-    click.echo(
-        f"Found {edge_count} edges and deleted {edge_delete} edges from space {space_name}."
-    )
     try:
         containers = client.data_modeling.containers.list(
             space=ToolGlobals.config("model_space"), limit=None
