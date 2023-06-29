@@ -10,8 +10,5 @@ echo "Dropping all the data for $1..."
 ./delete_data.py $1
 echo "Load data for $1..."
 ./load_data.py $1
-echo "Load data model for $1..."
-./cdf-login.sh
-./examples/$1/load_datamodel.sh
 echo "Run the tranformations for $1..."
 ./run_transformations.py $1

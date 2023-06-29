@@ -11,11 +11,11 @@
             "program": "load_data.py",
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
-                "apm_simple",
+                "movie_actors",
                 "--drop",
-                "True",
                 "--load",
-                "raw,timeseries,files,transformations"
+                "datamodel"
+                //"raw,timeseries,files,transformations,datamodel"
             ],
             "console": "integratedTerminal",
             "justMyCode": false
