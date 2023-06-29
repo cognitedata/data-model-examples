@@ -295,7 +295,7 @@ def delete_datamodel(instances_only=True, dry_run=False) -> None:
             node_delete += len(ret.nodes)
         node_count += len(instance_list)
     click.echo(
-        f"ERROR!!! Found {node_count} nodes and deleted {node_delete} nodes from {space_name}."
+        f"Found {node_count} nodes and deleted {node_delete} auto-generated nodes (not belonging to a view) from {space_name}."
     )
     if instances_only:
         return
