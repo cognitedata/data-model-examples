@@ -1,0 +1,35 @@
+{
+    "space": "{{cookiecutter.movie_actors_space}}",
+    "externalId": "{{cookiecutter.movie_actors_datamodel}}",
+    "version": "1",
+    "createdTime": 1688057270108,
+    "lastUpdatedTime": 1688057274024,
+    "isGlobal": false,
+    "name": "{{cookiecutter.movie_actors_datamodel}}",
+    "views": [
+        {
+            "type": "view",
+            "space": "{{cookiecutter.movie_actors_space}}",
+            "externalId": "Person",
+            "version": "e244188ba2571d"
+        },
+        {
+            "type": "view",
+            "space": "{{cookiecutter.movie_actors_space}}",
+            "externalId": "Director",
+            "version": "a95d29b87115f8"
+        },
+        {
+            "type": "view",
+            "space": "{{cookiecutter.movie_actors_space}}",
+            "externalId": "Actor",
+            "version": "5e692b28083b5f"
+        },
+        {
+            "type": "view",
+            "space": "{{cookiecutter.movie_actors_space}}",
+            "externalId": "Movie",
+            "version": "495595940485ec"
+        }
+    ]
+}

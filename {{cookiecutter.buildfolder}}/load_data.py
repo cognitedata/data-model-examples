@@ -18,8 +18,13 @@ import os
 import click
 import json
 from cognite.client.data_classes.time_series import TimeSeries
+from cognite.client.data_classes.data_modeling.data_models import DataModel
+from cognite.client.data_classes.data_modeling.views import View
+from cognite.client.data_classes.data_modeling.spaces import SpaceApply
+from cognite.client.data_classes.data_modeling.containers import Container
 from cognite.client.exceptions import CogniteNotFoundError
 from utils import ToolGlobals
+from delete_data import delete_datamodel
 from utils.transformations_config import parse_transformation_configs
 from utils.transformations_api import (
     to_transformation,
@@ -34,10 +39,12 @@ import pandas as pd
 @click.option("--file", default="", help="Specify a specific table to load.")
 @click.option(
     "--load",
-    default="raw,timeseries,files,transformations",
-    help="Specify which data you want to load. Default raw,timeseries,files,transformations.",
+    default="raw,timeseries,files,transformations,datamodel",
+    help="Specify which data you want to load. Default raw,timeseries,files,transformations,datamodel.",
 )
-@click.option("--drop", default=False, help="Whether to delete existing data.")
+@click.option(
+    "--drop", is_flag=True, default=False, help="Whether to delete existing data."
+)
 @click.argument("example_folder")
 def cli(file: str, load: str, drop: bool, example_folder: str):
     # Configure the ToolGlobals singleton with the example folder
@@ -51,6 +58,8 @@ def cli(file: str, load: str, drop: bool, example_folder: str):
         load_timeseries(file, drop)
     if "transformations" in load:
         load_transformations(file, drop)
+    if "datamodel" in load:
+        load_datamodel(drop)
     if ToolGlobals.failed:
         click.echo(f"Failure to load as expected.")
         exit(1)
@@ -316,6 +325,89 @@ def load_transformations(file: str, drop: bool) -> None:
     click.echo(
         f"Created {len(created_transformations)} transformations for example {ToolGlobals.example}."
     )
+
+
+def load_datamodel(drop: bool) -> None:
+    with open(
+        f"./examples/{ToolGlobals.example}/data_model/datamodel.json", "rt"
+    ) as file:
+        # Read directly into DataModel and convert to apply (write) version of datamodel.
+        # The json is a direct dump from API /models/datamodels/byids.
+        datamodel = DataModel.load(json.load(file)).as_apply()
+    views = {}
+    containers = {}
+    for v in datamodel.views:
+        with open(
+            f"./examples/{ToolGlobals.example}/data_model/{v.external_id}.view.json",
+            "rt",
+        ) as file:
+            # Load view and convert to apply (write) version of view as we are reading
+            # in a dump from a file.
+            # The dump is from API /models/views/byids.
+            views[v.external_id] = View.load(json.load(file)).as_apply()
+        with open(
+            f"./examples/{ToolGlobals.example}/data_model/{v.external_id}.container.json",
+            "rt",
+        ) as file:
+            # Load container and convert to apply (write) version of view as we are reading
+            # in a dump from a file.
+            # The dump is from API /models/containers
+            containers[v.external_id] = Container.load(json.load(file)).as_apply()
+
+    if drop:
+        delete_datamodel(instances_only=False)
+    # Clear any delete errors
+    ToolGlobals.failed = False
+    client = ToolGlobals.verify_client(
+        capabilities={
+            "dataModelsAcl": ["READ", "WRITE"],
+            "dataModelInstancesAcl": ["READ", "WRITE"],
+        }
+    )
+    space_name = ToolGlobals.config("model_space")
+    model_name = ToolGlobals.config("data_model")
+    try:
+        client.data_modeling.spaces.apply(
+            SpaceApply(
+                space=space_name,
+                name=space_name,
+                description=f"Space for {ToolGlobals.example} example",
+            )
+        )
+    except Exception as e:
+        click.echo(
+            f"Failed to write space {space_name} for example {ToolGlobals.example}."
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
+    click.echo(f"Created space {space_name}.")
+    try:
+        client.data_modeling.containers.apply([c for c in containers.values()])
+        click.echo(f"Created {len(containers)} containers.")
+    except Exception as e:
+        click.echo(f"Failed to write containers for example {ToolGlobals.example}.")
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
+    try:
+        client.data_modeling.views.apply([v for v in views.values()])
+        click.echo(f"Created {len(views)} views.")
+    except Exception as e:
+        click.echo(f"Failed to write views for example {ToolGlobals.example}.")
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
+    try:
+        client.data_modeling.data_models.apply(datamodel)
+    except Exception as e:
+        click.echo(
+            f"Failed to write data model {model_name} for example {ToolGlobals.example}."
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+        return
+    click.echo(f"Created data model {model_name}.")
 
 
 if __name__ == "__main__":
