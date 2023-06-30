@@ -26,12 +26,14 @@ if debug_status:
             "movie_actors": {
                 "raw_db": "test_movies",
                 "data_set": "tutorial_movies_dataset",
+                "data_set_desc": "Data set for the movies-actor tutorial",
                 "model_space": "tutorial_movies",
                 "data_model": "tutorial_MovieDM",
             },
             "apm_simple": {
                 "raw_db": "test_apm_simple",
                 "data_set": "Valhall_System_23",
+                "data_set_desc": "Valhall_System_23",
                 "model_space": "tutorial_apm_simple",
                 "data_model": "tutorial_apm_simple",
             },

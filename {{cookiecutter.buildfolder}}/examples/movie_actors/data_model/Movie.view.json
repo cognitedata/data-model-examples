@@ -1,0 +1,155 @@
+{
+    "externalId": "Movie",
+    "space": "{{cookiecutter.movie_actors_space}}",
+    "version": "495595940485ec",
+    "createdTime": 1688057273294,
+    "lastUpdatedTime": 1688057273294,
+    "writable": true,
+    "usedFor": "node",
+    "isGlobal": false,
+    "properties": {
+        "name": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie"
+            },
+            "containerPropertyIdentifier": "name",
+            "nullable": false,
+            "autoIncrement": false,
+            "name": "name"
+        },
+        "description": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie"
+            },
+            "containerPropertyIdentifier": "description",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "description"
+        },
+        "watchedIt": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie"
+            },
+            "containerPropertyIdentifier": "watchedIt",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "watchedIt"
+        },
+        "imdbRating": {
+            "type": {
+                "type": "float64",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie"
+            },
+            "containerPropertyIdentifier": "imdbRating",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "imdbRating"
+        },
+        "releasedYear": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie"
+            },
+            "containerPropertyIdentifier": "releasedYear",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "releasedYear"
+        },
+        "gross": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie"
+            },
+            "containerPropertyIdentifier": "gross",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "gross"
+        },
+        "runTime": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie"
+            },
+            "containerPropertyIdentifier": "runTime",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "runTime"
+        },
+        "director": {
+            "type": {
+                "type": "direct",
+                "source": {
+                    "type": "view",
+                    "space": "{{cookiecutter.movie_actors_space}}",
+                    "externalId": "Director",
+                    "version": "a95d29b87115f8"
+                }
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie"
+            },
+            "containerPropertyIdentifier": "director",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "director"
+        },
+        "actors": {
+            "type": {
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Movie.actors"
+            },
+            "source": {
+                "type": "view",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Actor",
+                "version": "5e692b28083b5f"
+            },
+            "name": "actors",
+            "direction": "outwards"
+        }
+    },
+    "name": "Movie",
+    "implements": []
+}

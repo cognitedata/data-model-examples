@@ -1,0 +1,67 @@
+{
+    "externalId": "Actor",
+    "space": "{{cookiecutter.movie_actors_space}}",
+    "version": "5e692b28083b5f",
+    "createdTime": 1688057273294,
+    "lastUpdatedTime": 1688057273294,
+    "writable": true,
+    "usedFor": "node",
+    "isGlobal": false,
+    "properties": {
+        "name": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Person"
+            },
+            "containerPropertyIdentifier": "name",
+            "nullable": false,
+            "autoIncrement": false,
+            "name": "name"
+        },
+        "age": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Person"
+            },
+            "containerPropertyIdentifier": "age",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "age"
+        },
+        "didWinOscar": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.movie_actors_space}}",
+                "externalId": "Actor"
+            },
+            "containerPropertyIdentifier": "didWinOscar",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "didWinOscar"
+        }
+    },
+    "name": "Actor",
+    "implements": [
+        {
+            "type": "view",
+            "space": "{{cookiecutter.movie_actors_space}}",
+            "externalId": "Person",
+            "version": "e244188ba2571d"
+        }
+    ]
+}

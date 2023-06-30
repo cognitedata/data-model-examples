@@ -1,0 +1,191 @@
+{
+    "space": "{{cookiecutter.apm_simple_space}}",
+    "externalId": "WorkOrder",
+    "usedFor": "node",
+    "properties": {
+        "durationHours": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "durationHours"
+        },
+        "isCancelled": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isCancelled"
+        },
+        "workPackageNumber": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "workPackageNumber"
+        },
+        "dueDate": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "dueDate"
+        },
+        "description": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "description"
+        },
+        "plannedStart": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "plannedStart"
+        },
+        "isActive": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isActive"
+        },
+        "title": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "title"
+        },
+        "actualHours": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "actualHours"
+        },
+        "isSafetyCritical": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isSafetyCritical"
+        },
+        "percentageProgress": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "percentageProgress"
+        },
+        "createdDate": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "createdDate"
+        },
+        "priorityDescription": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "priorityDescription"
+        },
+        "workOrderNumber": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "workOrderNumber"
+        },
+        "programNumber": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "programNumber"
+        },
+        "startTime": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "startTime"
+        },
+        "endTime": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "endTime"
+        },
+        "isCompleted": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isCompleted"
+        },
+        "status": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "status"
+        }
+    },
+    "createdTime": 1688050925103,
+    "lastUpdatedTime": 1688050925103,
+    "isGlobal": false,
+    "name": "WorkOrder",
+    "constraints": {},
+    "indexes": {}
+}

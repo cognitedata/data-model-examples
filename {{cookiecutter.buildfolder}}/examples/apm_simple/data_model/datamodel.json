@@ -1,0 +1,29 @@
+{
+    "space": "{{cookiecutter.apm_simple_space}}",
+    "externalId": "{{cookiecutter.apm_simple_datamodel}}",
+    "version": "1",
+    "createdTime": 1688056943799,
+    "lastUpdatedTime": 1688056943799,
+    "isGlobal": false,
+    "name": "{{cookiecutter.apm_simple_datamodel}}",
+    "views": [
+        {
+            "type": "view",
+            "space": "{{cookiecutter.apm_simple_space}}",
+            "externalId": "Asset",
+            "version": "aea363cc6d37ba"
+        },
+        {
+            "type": "view",
+            "space": "{{cookiecutter.apm_simple_space}}",
+            "externalId": "WorkOrder",
+            "version": "5f8749a07c2940"
+        },
+        {
+            "type": "view",
+            "space": "{{cookiecutter.apm_simple_space}}",
+            "externalId": "WorkItem",
+            "version": "f9c8dbdc9ddb2d"
+        }
+    ]
+}
