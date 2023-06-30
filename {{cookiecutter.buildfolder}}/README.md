@@ -101,21 +101,31 @@ Or, you can do the steps one by one (you can also look at the `./clean_and_load.
 
 1. Look at the README.md in each `./example/*` folder. It will tell you if there are more example-specific options.
 
-## Structure of each example
+## About the examples
 
-In the `./examples` directory, you will find the following:
+This library of examples will be continuously maintained and expanded.
 
-* `LICENSE.dataset.md`: The license for the data set.
-* `README.md`: More details about the data set.
-* `requirements.txt/pyproject.toml`: if there are any additional requirements for using the data set (not
-    for loading the data set, that is handled by the `requirements.txt` in the build folder).
-* `data/` directory with files, raw, and timeseries that are loaded by load_data.py.
-* `transformations/` directory with transformations definitions (YAML files) that are loaded by
-    load_data.py.
-* `data_model/` directory with data model definitions (json files) that are loaded by load_data.py
-    using the Python SDK (and the /model/ REST APIs).
-* `datamodel.graphql`: the graphql schema for the data model that you can load info CDF from the
-    CDF UI. This schema file can also be used by the CDF CLI tool for data models (see below).
+### movie_actors
+
+The movie_actors example contains CSV raw data that are loaded into CDF RAW, a simple data model,
+and transformations that will ingest data from the RAW database into the data model.
+
+The example is simple to understand and the documentation can be found at: <https://docs.cognite.com/cdf/data_modeling/guides/upload_demo_dm>.
+
+### apm_simple
+
+The apm_simple example is a more full-fledged data set with a data model that exemplifies how to
+store data within the Asset Performance Management space. The model itself is simplified and
+should not be used for production purposes, but illustrates some key principles.
+
+In addition to raw CSV data, transformations, and a data model, this data set also contains
+a select few time series from a compressor at Valhall from the North Sea. Also, a set of
+Process and Instrumentation Diagrams (P&IDs) are included.
+
+This makes this example more suitable for testing out the wider set of CDF functionalities, like
+Charts for timeseries investigations and plotting.
+
+See [./examples/apm_simple/README.md](./examples/apm_simple/README.md) for more information.
 
 ### Data Modeling CLI tool
 
@@ -145,7 +155,23 @@ cdf dm create --interactive false --external-id data_model_name --space space_na
 cdf dm publish --interactive false --external-id data_model_name --space space_name --version 1 --file ./examples/<example>/datamodel.graphql
 ```
 
-## describe_datamode.py
+## Structure of each example
+
+In the `./examples` directory, you will find the following:
+
+* `LICENSE.dataset.md`: The license for the data set.
+* `README.md`: More details about the data set.
+* `requirements.txt/pyproject.toml`: if there are any additional requirements for using the data set (not
+    for loading the data set, that is handled by the `requirements.txt` in the build folder).
+* `data/` directory with files, raw, and timeseries that are loaded by load_data.py.
+* `transformations/` directory with transformations definitions (YAML files) that are loaded by
+    load_data.py.
+* `data_model/` directory with data model definitions (json files) that are loaded by load_data.py
+    using the Python SDK (and the /model/ REST APIs).
+* `datamodel.graphql`: the graphql schema for the data model that you can load info CDF from the
+    CDF UI. This schema file can also be used by the CDF CLI tool for data models (see below).
+
+## describe_datamodel.py
 
 The `describe_datamodel.py <space> <data_model>` script will describe any data model (no writing happens) and
 can be used on your own data models as well (not only the examples).
@@ -201,29 +227,3 @@ Found in total 3961 nodes in space tutorial_apm_simple across all views and cont
   1314 nodes of view WorkOrder.
   1536 nodes of view WorkItem.
 ```
-
-## About the examples
-
-This library of examples will be continuously maintained and expanded.
-
-### movie_actors
-
-The movie_actors example contains CSV raw data that are loaded into CDF RAW, a simple data model,
-and transformations that will ingest data from the RAW database into the data model.
-
-The example is simple to understand and the documentation can be found at: <https://docs.cognite.com/cdf/data_modeling/guides/upload_demo_dm>.
-
-### apm_simple
-
-The apm_simple example is a more full-fledged data set with a data model that exemplifies how to
-store data within the Asset Performance Management space. The model itself is simplified and
-should not be used for production purposes, but illustrates some key principles.
-
-In addition to raw CSV data, transformations, and a data model, this data set also contains
-a select few time series from a compressor at Valhall from the North Sea. Also, a set of
-Process and Instrumentation Diagrams (P&IDs) are included.
-
-This makes this example more suitable for testing out the wider set of CDF functionalities, like
-Charts for timeseries investigations and plotting.
-
-See [./examples/apm_simple/README.md](./examples/apm_simple/README.md) for more information.
