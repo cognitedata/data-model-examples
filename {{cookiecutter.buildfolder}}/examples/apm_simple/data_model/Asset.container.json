@@ -11,6 +11,15 @@
             "autoIncrement": false,
             "name": "parent"
         },
+        "areaId": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "areaId"
+        },
         "createdDate": {
             "type": {
                 "type": "timestamp",
@@ -20,14 +29,14 @@
             "autoIncrement": false,
             "name": "createdDate"
         },
-        "areaId": {
+        "documents": {
             "type": {
-                "type": "int32",
-                "list": false
+                "type": "file",
+                "list": true
             },
             "nullable": true,
             "autoIncrement": false,
-            "name": "areaId"
+            "name": "documents"
         },
         "isCriticalLine": {
             "type": {
@@ -48,14 +57,14 @@
             "autoIncrement": false,
             "name": "description"
         },
-        "updatedDate": {
+        "metrics": {
             "type": {
-                "type": "timestamp",
-                "list": false
+                "type": "timeseries",
+                "list": true
             },
             "nullable": true,
             "autoIncrement": false,
-            "name": "updatedDate"
+            "name": "metrics"
         },
         "tag": {
             "type": {
@@ -66,6 +75,15 @@
             "nullable": true,
             "autoIncrement": false,
             "name": "tag"
+        },
+        "updatedDate": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "updatedDate"
         },
         "isActive": {
             "type": {
@@ -96,8 +114,8 @@
             "name": "sourceDb"
         }
     },
-    "createdTime": 1688050925103,
-    "lastUpdatedTime": 1688050925103,
+    "createdTime": 1688131246177,
+    "lastUpdatedTime": 1688131246177,
     "isGlobal": false,
     "name": "Asset",
     "constraints": {},

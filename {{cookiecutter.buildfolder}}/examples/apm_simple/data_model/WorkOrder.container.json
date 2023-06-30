@@ -50,14 +50,15 @@
             "autoIncrement": false,
             "name": "description"
         },
-        "plannedStart": {
+        "title": {
             "type": {
-                "type": "timestamp",
-                "list": false
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
             },
             "nullable": true,
             "autoIncrement": false,
-            "name": "plannedStart"
+            "name": "title"
         },
         "isActive": {
             "type": {
@@ -68,15 +69,14 @@
             "autoIncrement": false,
             "name": "isActive"
         },
-        "title": {
+        "plannedStart": {
             "type": {
-                "type": "text",
-                "list": false,
-                "collation": "ucs_basic"
+                "type": "timestamp",
+                "list": false
             },
             "nullable": true,
             "autoIncrement": false,
-            "name": "title"
+            "name": "plannedStart"
         },
         "actualHours": {
             "type": {
@@ -124,16 +124,6 @@
             "autoIncrement": false,
             "name": "priorityDescription"
         },
-        "workOrderNumber": {
-            "type": {
-                "type": "text",
-                "list": false,
-                "collation": "ucs_basic"
-            },
-            "nullable": true,
-            "autoIncrement": false,
-            "name": "workOrderNumber"
-        },
         "programNumber": {
             "type": {
                 "type": "text",
@@ -143,6 +133,16 @@
             "nullable": true,
             "autoIncrement": false,
             "name": "programNumber"
+        },
+        "workOrderNumber": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "workOrderNumber"
         },
         "startTime": {
             "type": {
@@ -162,15 +162,6 @@
             "autoIncrement": false,
             "name": "endTime"
         },
-        "isCompleted": {
-            "type": {
-                "type": "boolean",
-                "list": false
-            },
-            "nullable": true,
-            "autoIncrement": false,
-            "name": "isCompleted"
-        },
         "status": {
             "type": {
                 "type": "text",
@@ -180,10 +171,19 @@
             "nullable": true,
             "autoIncrement": false,
             "name": "status"
+        },
+        "isCompleted": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isCompleted"
         }
     },
-    "createdTime": 1688050925103,
-    "lastUpdatedTime": 1688050925103,
+    "createdTime": 1688131246177,
+    "lastUpdatedTime": 1688131246177,
     "isGlobal": false,
     "name": "WorkOrder",
     "constraints": {},

@@ -11,6 +11,7 @@ type Asset {
   isActive: Boolean
   updatedDate: Timestamp
   metrics:[TimeSeries]
+  documents: [File]
 }
 
 type WorkOrder {
