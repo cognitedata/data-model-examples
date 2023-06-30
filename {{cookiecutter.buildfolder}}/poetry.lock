@@ -237,13 +237,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cognite-sdk"
-version = "6.5.6"
+version = "6.5.7"
 description = "Cognite Python SDK"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "cognite_sdk-6.5.6-py3-none-any.whl", hash = "sha256:d2c2566361d0dd6a40ca9094e8d4637a27f7f2d09a0e443c517df6fb83bf6377"},
-    {file = "cognite_sdk-6.5.6.tar.gz", hash = "sha256:1a037d74f2476b9ec17acee83d693e1fd6e04bda96133ae1fc50d58980bae477"},
+    {file = "cognite_sdk-6.5.7-py3-none-any.whl", hash = "sha256:f2ca0bc2c78cb33c76d9f0a3d45d7e64cf2dc62e5785ccc001f4de5410eb67a0"},
+    {file = "cognite_sdk-6.5.7.tar.gz", hash = "sha256:630ee234390e361bec7086e448170395f5086256d0d26379847a3f08508fcd54"},
 ]
 
 [package.dependencies]
@@ -1490,4 +1490,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a27ea326c0fb124df0690087d412fd1ee7fcd04c8bb90fd798271eb8e025bea3"
+content-hash = "020baafad11835686652790567656a7ace27cfc5ac7e4b06015711a6b999ad67"
