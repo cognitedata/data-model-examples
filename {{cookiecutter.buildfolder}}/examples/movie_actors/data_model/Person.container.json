@@ -1,0 +1,32 @@
+{
+    "space": "{{cookiecutter.movie_actors_space}}",
+    "externalId": "Person",
+    "usedFor": "node",
+    "properties": {
+        "name": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": false,
+            "autoIncrement": false,
+            "name": "name"
+        },
+        "age": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "age"
+        }
+    },
+    "createdTime": 1688057272546,
+    "lastUpdatedTime": 1688057272546,
+    "isGlobal": false,
+    "name": "Person",
+    "constraints": {},
+    "indexes": {}
+}

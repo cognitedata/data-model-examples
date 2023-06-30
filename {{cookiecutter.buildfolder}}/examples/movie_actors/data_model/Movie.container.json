@@ -1,0 +1,86 @@
+{
+    "space": "{{cookiecutter.movie_actors_space}}",
+    "externalId": "Movie",
+    "usedFor": "node",
+    "properties": {
+        "gross": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "gross"
+        },
+        "watchedIt": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "watchedIt"
+        },
+        "director": {
+            "type": {
+                "type": "direct"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "director"
+        },
+        "name": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": false,
+            "autoIncrement": false,
+            "name": "name"
+        },
+        "description": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "description"
+        },
+        "imdbRating": {
+            "type": {
+                "type": "float64",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "imdbRating"
+        },
+        "runTime": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "runTime"
+        },
+        "releasedYear": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "releasedYear"
+        }
+    },
+    "createdTime": 1688057272546,
+    "lastUpdatedTime": 1688057272546,
+    "isGlobal": false,
+    "name": "Movie",
+    "constraints": {},
+    "indexes": {}
+}

@@ -1,0 +1,334 @@
+{
+    "externalId": "WorkOrder",
+    "space": "{{cookiecutter.apm_simple_space}}",
+    "version": "5f8749a07c2940",
+    "createdTime": 1687939251483,
+    "lastUpdatedTime": 1687939251483,
+    "writable": true,
+    "usedFor": "node",
+    "isGlobal": false,
+    "properties": {
+        "startTime": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "startTime",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "startTime"
+        },
+        "endTime": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "endTime",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "endTime"
+        },
+        "title": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "title",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "title"
+        },
+        "description": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "description",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "description"
+        },
+        "programNumber": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "programNumber",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "programNumber"
+        },
+        "workOrderNumber": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "workOrderNumber",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "workOrderNumber"
+        },
+        "status": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "status",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "status"
+        },
+        "dueDate": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "dueDate",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "dueDate"
+        },
+        "isActive": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "isActive",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isActive"
+        },
+        "workPackageNumber": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "workPackageNumber",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "workPackageNumber"
+        },
+        "createdDate": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "createdDate",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "createdDate"
+        },
+        "plannedStart": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "plannedStart",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "plannedStart"
+        },
+        "priorityDescription": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "priorityDescription",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "priorityDescription"
+        },
+        "durationHours": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "durationHours",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "durationHours"
+        },
+        "actualHours": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "actualHours",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "actualHours"
+        },
+        "isCancelled": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "isCancelled",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isCancelled"
+        },
+        "isCompleted": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "isCompleted",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isCompleted"
+        },
+        "percentageProgress": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "percentageProgress",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "percentageProgress"
+        },
+        "isSafetyCritical": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder"
+            },
+            "containerPropertyIdentifier": "isSafetyCritical",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isSafetyCritical"
+        },
+        "workItems": {
+            "type": {
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder.workItems"
+            },
+            "source": {
+                "type": "view",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkItem",
+                "version": "f9c8dbdc9ddb2d"
+            },
+            "name": "workItems",
+            "direction": "outwards"
+        },
+        "linkedAssets": {
+            "type": {
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "WorkOrder.linkedAssets"
+            },
+            "source": {
+                "type": "view",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "Asset",
+                "version": "aea363cc6d37ba"
+            },
+            "name": "linkedAssets",
+            "direction": "outwards"
+        }
+    },
+    "name": "WorkOrder",
+    "implements": []
+}

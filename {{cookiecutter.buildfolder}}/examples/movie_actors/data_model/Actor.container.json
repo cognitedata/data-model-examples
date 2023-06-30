@@ -1,0 +1,22 @@
+{
+    "space": "{{cookiecutter.movie_actors_space}}",
+    "externalId": "Actor",
+    "usedFor": "node",
+    "properties": {
+        "didWinOscar": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "didWinOscar"
+        }
+    },
+    "createdTime": 1688057272546,
+    "lastUpdatedTime": 1688057272546,
+    "isGlobal": false,
+    "name": "Actor",
+    "constraints": {},
+    "indexes": {}
+}

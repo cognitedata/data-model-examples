@@ -25,7 +25,7 @@ The structure should be the following under the `examples/` directory:
 ## To add a new example
 
 1. Follow the structure of the existing ones and add a new one in a separate directory.
-2. Edit the cookiecutter.json file to add the defaults for your example:
+1. Edit the cookiecutter.json file to add the defaults for your example:
 
     ```json
     "apm_simple_raw_db": "tutorial_apm",
@@ -35,18 +35,24 @@ The structure should be the following under the `examples/` directory:
     "apm_simple_data_set_desc": "Valhall_System_23"
     ```
 
-3. Then edit inventory.json to add your example to the list so that the scripts can pick up
+1. Then edit inventory.json to add your example to the list so that the scripts can pick up
     the example. Note that the cookiecutter variables allow the user to substitute with their own values when using the template.
 
-4. Edit the README.md in this folder (at the end) with a short description of the example.
+1. Edit the README.md in this folder (at the end) with a short description of the example.
 
-5. You should be good to go. Run `cookiecutter .` to generate the build directory, now with your example.
+1. You should be good to go. Run `cookiecutter .` to generate the build directory, now with your example.
 
-6. Update the [Changelog](./CHANGELOG.md)
+1. Update the [Changelog](./CHANGELOG.md)
 
-7. Once it's working, open a Pull Request on this repo.
+1. Once it's working, open a Pull Request on this repo.
 
-8. Thanks a lot!!!
+1. Thanks a lot!!!
+
+### A note on the data_model json files
+
+The json files found in the data_model folder consist of the datamodel.json file that needs to contain the
+data model as exported from the `/models/datamodels/byids` API.
+For each of the views in the data model, there needs to a `<view>.container.json` and a `<view>.view.json file`. These are exported from `/models/containers` and `/models/views/byids` respectively.
 
 ## Debugging python scripts
 

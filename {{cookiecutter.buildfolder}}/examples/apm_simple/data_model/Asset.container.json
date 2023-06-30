@@ -1,0 +1,105 @@
+{
+    "space": "{{cookiecutter.apm_simple_space}}",
+    "externalId": "Asset",
+    "usedFor": "node",
+    "properties": {
+        "parent": {
+            "type": {
+                "type": "direct"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "parent"
+        },
+        "createdDate": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "createdDate"
+        },
+        "areaId": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "areaId"
+        },
+        "isCriticalLine": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isCriticalLine"
+        },
+        "description": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "description"
+        },
+        "updatedDate": {
+            "type": {
+                "type": "timestamp",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "updatedDate"
+        },
+        "tag": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "tag"
+        },
+        "isActive": {
+            "type": {
+                "type": "boolean",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "isActive"
+        },
+        "categoryId": {
+            "type": {
+                "type": "int32",
+                "list": false
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "categoryId"
+        },
+        "sourceDb": {
+            "type": {
+                "type": "text",
+                "list": false,
+                "collation": "ucs_basic"
+            },
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "sourceDb"
+        }
+    },
+    "createdTime": 1688050925103,
+    "lastUpdatedTime": 1688050925103,
+    "isGlobal": false,
+    "name": "Asset",
+    "constraints": {},
+    "indexes": {}
+}
