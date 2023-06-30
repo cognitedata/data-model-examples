@@ -18,6 +18,7 @@ import os
 import click
 import json
 from cognite.client.data_classes.time_series import TimeSeries
+from cognite.client.data_classes.data_modeling import ViewId
 from utils.transformations_config import parse_transformation_configs
 from utils import ToolGlobals
 import pandas as pd
@@ -25,33 +26,41 @@ import pandas as pd
 
 @click.command()
 @click.option(
+    "--dry-run",
+    default=False,
+    is_flag=True,
+    help="Do not delete anything for data models, just simulate",
+)
+@click.option(
     "--delete",
     default="raw,timeseries,files,transformations,datamodel,instances",
     help="Specify which data you want to delete. Default raw,timeseries,files,transformations,datamodel(all), instances.",
 )
 @click.argument("example_folder")
-def cli(delete: str, example_folder: str):
+def cli(delete: str, example_folder: str, dry_run: bool):
     # Configure the ToolGlobals singleton with the example folder
     # It will then pick up the right configuration from the inventory.json file
     ToolGlobals.example = example_folder
+    if dry_run:
+        click.echo("DRY RUN: no deletions will be done...")
     if "raw" in delete:
-        delete_raw()
+        delete_raw(dry_run=dry_run)
     if "files" in delete:
-        delete_files()
+        delete_files(dry_run=dry_run)
     if "timeseries" in delete:
-        delete_timeseries()
+        delete_timeseries(dry_run=dry_run)
     if "transformations" in delete:
-        delete_transformations()
+        delete_transformations(dry_run=dry_run)
     if "instances" in delete and "datamodel" not in delete:
-        delete_datamodel(instances_only=True)
+        delete_datamodel(instances_only=True, dry_run=dry_run)
     if "datamodel" in delete:
-        delete_datamodel(instances_only=False)
-    if ToolGlobals.failed:
+        delete_datamodel(instances_only=False, dry_run=dry_run)
+    if ToolGlobals.failed and not dry_run:
         click.echo(f"Failure to delete as expected.")
         exit(1)
 
 
-def delete_raw() -> None:
+def delete_raw(dry_run=False) -> None:
     """Delete raw data from CDF raw based om csv files in the example"""
     client = ToolGlobals.verify_client(capabilities={"rawAcl": ["READ", "WRITE"]})
     # The name of the raw database to create is picked up from the inventory.py file, which
@@ -67,8 +76,10 @@ def delete_raw() -> None:
         tables = client.raw.tables.list(raw_db)
         if len(tables) > 0:
             for table in tables:
-                client.raw.tables.delete(raw_db, table.name)
-        client.raw.databases.delete(raw_db)
+                if not dry_run:
+                    client.raw.tables.delete(raw_db, table.name)
+        if not dry_run:
+            client.raw.databases.delete(raw_db)
         click.echo(f"Deleted {raw_db} for example {ToolGlobals.example}.")
     except:
         click.echo(
@@ -77,7 +88,7 @@ def delete_raw() -> None:
         ToolGlobals.failed = True
 
 
-def delete_files() -> None:
+def delete_files(dry_run=False) -> None:
     try:
         client = ToolGlobals.verify_client(capabilities={"filesAcl": ["READ", "WRITE"]})
     except Exception as e:
@@ -95,7 +106,8 @@ def delete_files() -> None:
     count = 0
     for f in files:
         try:
-            client.files.delete(external_id=f)
+            if not dry_run:
+                client.files.delete(external_id=f)
             count += 1
         except Exception as e:
             pass
@@ -108,7 +120,7 @@ def delete_files() -> None:
     ToolGlobals.failed = True
 
 
-def delete_timeseries() -> None:
+def delete_timeseries(dry_run=False) -> None:
     """Delete timeseries from CDF based on json files in the example"""
 
     client = ToolGlobals.verify_client(
@@ -139,7 +151,8 @@ def delete_timeseries() -> None:
     count = 0
     for e_id in drop_ts:
         try:
-            client.time_series.delete(external_id=e_id, ignore_unknown_ids=False)
+            if not dry_run:
+                client.time_series.delete(external_id=e_id, ignore_unknown_ids=False)
             count += 1
         except Exception as e:
             pass
@@ -152,7 +165,7 @@ def delete_timeseries() -> None:
         ToolGlobals.failed = True
 
 
-def delete_transformations() -> None:
+def delete_transformations(dry_run=False) -> None:
     client = ToolGlobals.verify_client(
         capabilities={"transformationsAcl": ["READ", "WRITE"]}
     )
@@ -161,7 +174,8 @@ def delete_transformations() -> None:
     )
     transformations_ext_ids = [t.external_id for t in configs.values()]
     try:
-        client.transformations.delete(external_id=transformations_ext_ids)
+        if not dry_run:
+            client.transformations.delete(external_id=transformations_ext_ids)
         click.echo(
             f"Deleted {len(transformations_ext_ids)} transformations for example {ToolGlobals.example}."
         )
@@ -173,7 +187,7 @@ def delete_transformations() -> None:
         return
 
 
-def delete_datamodel(instances_only=True) -> None:
+def delete_datamodel(instances_only=True, dry_run=False) -> None:
     """Delete data model from CDF based on the data model in the example
 
     Note that deleting the data model does not delete the views it consists of or
@@ -207,95 +221,52 @@ def delete_datamodel(instances_only=True) -> None:
             f"Failed to retrieve data model {model_name} for example {ToolGlobals.example}"
         )
         ToolGlobals.failed = True
-        return
-    view_list = [
-        (space_name, d.external_id, d.version) for d in data_model.data[0].views
-    ]
+        view_list = []
+    else:
+        view_list = [
+            (space_name, d.external_id, d.version) for d in data_model.data[0].views
+        ]
     click.echo(f"Found {len(view_list)} views in the data model: {model_name}")
-    views = []
+    # It's best practice to delete edges first as edges are deleted when nodes are deleted,
+    # but this cascading delete is more expensive than deleting the edges directly.
+    #
+    # Find any edges in the space
+    # Iterate over all the edges in the view 1,000 at the time
+    edge_count = 0
+    edge_delete = 0
+    for instance_list in client.data_modeling.instances(
+        instance_type="edge",
+        include_typing=False,
+        filter={"equals": {"property": ["edge", "space"], "value": space_name}},
+        chunk_size=1000,
+    ):
+        instances = [(space_name, i.external_id) for i in instance_list.data]
+        if not dry_run:
+            ret = client.data_modeling.instances.delete(edges=instances)
+            edge_delete += len(ret.edges)
+        edge_count += len(instance_list)
+    click.echo(
+        f"Found {edge_count} edges and deleted {edge_delete} edges from space {space_name}."
+    )
     # For all the views in this data model...
     for _, id, version in view_list:
-        # ...retrieve all the instances of the view
-        cursors = {}
-        instances = []
-        while cursors is not None:
-            query = {
-                "with": {
-                    id: {
-                        "nodes": {
-                            "filter": {
-                                "hasData": [
-                                    {
-                                        "type": "view",
-                                        "space": ToolGlobals.config("model_space"),
-                                        "externalId": id,
-                                        "version": version,
-                                    }
-                                ]
-                            },
-                        },
-                        "limit": 1000,
-                    }
-                },
-                "select": {id: {}},
-            }
-            # If we have a cursor, add it to the query
-            if len(cursors) > 0:
-                query["cursors"] = cursors
-            # Retrieve the instances of the view
-            try:
-                nodes = client.post(
-                    "/api/v1/projects/"
-                    + client.config.project
-                    + "/models/instances/query",
-                    json=query,
-                ).json()
-            except Exception as e:
-                click.echo(
-                    f"Failed to retrieve instances of view {id} for example {ToolGlobals.example}"
-                )
-                click.echo(e)
-                ToolGlobals.failed = True
-                return
-            # Build the list of instances needed for deletion
-            instances.extend(
-                [
-                    {
-                        "instanceType": i.get("instanceType"),
-                        "externalId": i.get("externalId", None),
-                        "space": space_name,
-                    }
-                    for i in nodes.get("items", {}).get(id, [])
-                ]
-            )
-            cursors = nodes.get("nextCursor", {})
-            if len(cursors) == 0:
-                cursors = None
-        start = 0
-        count = 0
-        while start < len(instances):
-            stop = start + 999  # Max number of instances to delete in one request
-            if stop > len(instances):
-                stop = len(instances)
-            try:
-                ret = client.post(
-                    "/api/v1/projects/"
-                    + client.config.project
-                    + "/models/instances/delete",
-                    json={"items": instances[start:stop]},
-                ).json()
-            except Exception as e:
-                click.echo(
-                    f"Failed to delete instances of view {id} for example {ToolGlobals.example}"
-                )
-                click.echo(e)
-                ToolGlobals.failed = True
-                return
-            count += len(ret.get("items", []))
-            start += stop
-
-        print(f"Deleted {count} nodes and edges from {id} in {model_name}.")
-
+        node_count = 0
+        node_delete = 0
+        # Iterate over all the nodes in the view 1,000 at the time
+        for instance_list in client.data_modeling.instances(
+            instance_type="node",
+            include_typing=False,
+            sources=ViewId(space_name, id, version),
+            chunk_size=1000,
+        ):
+            instances = [(space_name, i.external_id) for i in instance_list.data]
+            if not dry_run:
+                ret = client.data_modeling.instances.delete(nodes=instances)
+                node_delete += len(ret.nodes)
+            node_count += len(instance_list)
+        click.echo(
+            f"Found {node_count} nodes and deleted {node_delete} nodes from {id} in {model_name}."
+        )
     try:
         containers = client.data_modeling.containers.list(
             space=ToolGlobals.config("model_space"), limit=None
@@ -306,56 +277,75 @@ def delete_datamodel(instances_only=True) -> None:
         ToolGlobals.failed = True
         return
     container_list = [(space_name, c.external_id) for c in containers.data]
-    for _, id in container_list:
-        query = {
-            "with": {
-                id: {
-                    "nodes": {
-                        "filter": {
-                            "hasData": [
-                                {
-                                    "type": "container",
-                                    "space": ToolGlobals.config("model_space"),
-                                    "externalId": id,
-                                }
-                            ]
-                        },
-                    },
-                    "limit": 1000,
-                }
-            },
-            "select": {id: {}},
-        }
-        try:
-            nodes = client.post(
-                "/api/v1/projects/" + client.config.project + "/models/instances/query",
-                json=query,
-            ).json()
-        except Exception as e:
-            continue
-        if len(nodes.get("items", {}).get(id, [])) > 0:
-            click.echo(
-                f"ERROR! Found {len(nodes)} remaining nodes in the container: {id}"
-            )
-            ToolGlobals.failed = True
+    click.echo(
+        f"Found {len(container_list)} containers in the space {space_name} for example {ToolGlobals.example}"
+    )
+    # Find any remaining nodes in the space
+    node_count = 0
+    node_delete = 0
+    for instance_list in client.data_modeling.instances(
+        instance_type="node",
+        include_typing=False,
+        filter={"equals": {"property": ["node", "space"], "value": space_name}},
+        chunk_size=1000,
+    ):
+        instances = [(space_name, i.external_id) for i in instance_list.data]
+        if not dry_run:
+            ret = client.data_modeling.instances.delete(instances)
+            node_delete += len(ret.nodes)
+        node_count += len(instance_list)
+    click.echo(
+        f"Found {node_count} nodes and deleted {node_delete} auto-generated nodes (not belonging to a view) from {space_name}."
+    )
     if instances_only:
         return
     try:
-        client.data_modeling.containers.delete(container_list)
-        click.echo(
-            f"Deleted {len(container_list)} containers in data model {model_name}."
-        )
-        client.data_modeling.views.delete(view_list)
-        click.echo(f"Deleted {len(view_list)} views in data model {model_name}.")
-        client.data_modeling.data_models.delete((space_name, model_name, "1"))
-        click.echo(f"Deleted the data model {model_name}.")
+        if len(container_list) > 0:
+            if not dry_run:
+                client.data_modeling.containers.delete(container_list)
+            click.echo(
+                f"Deleted {len(container_list)} containers in data model {model_name}."
+            )
     except Exception as e:
         click.echo(
-            f"Failed to delete containers, views, or data model {model_name} for example {ToolGlobals.example}"
+            f"Failed to delete containers in {space_name} for example {ToolGlobals.example}"
         )
         click.echo(e)
         ToolGlobals.failed = True
-        return
+    try:
+        if len(view_list) > 0:
+            if not dry_run:
+                client.data_modeling.views.delete(view_list)
+            click.echo(f"Deleted {len(view_list)} views in data model {model_name}.")
+    except Exception as e:
+        click.echo(
+            f"Failed to delete views in {space_name} for example {ToolGlobals.example}"
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+    try:
+        if len(container_list) > 0 or len(view_list) > 0:
+            if not dry_run:
+                client.data_modeling.data_models.delete((space_name, model_name, "1"))
+            click.echo(f"Deleted the data model {model_name}.")
+    except Exception as e:
+        click.echo(
+            f"Failed to delete data model in {space_name} for example {ToolGlobals.example}"
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
+    try:
+        space = client.data_modeling.spaces.retrieve(space_name)
+        if space is not None:
+            if not dry_run:
+                client.data_modeling.spaces.delete(space_name)
+            click.echo(f"Deleted the space {space_name}.")
+    except Exception as e:
+        click.echo(
+            f"Failed to delete space {space_name} for example {ToolGlobals.example}"
+        )
+        click.echo(e)
+        ToolGlobals.failed = True
 
 
 if __name__ == "__main__":

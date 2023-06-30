@@ -128,6 +128,63 @@ Or, you can do the steps one by one (you can also look at the `./clean_and_load.
 
 1. Look at the README.md in each `./example/*` folder. It will tell you if there are more example-specific options.
 
+## describe_datamode.py
+
+The `describe_datamodel.py <space> <data_model>` script will describe any data model (no writing happens) and
+can be used on your own data models as well (not only the examples).
+
+An example for the apm_simple model can be seen below.
+
+```txt
+Describing data model ({model_name}) in space ({space_name})...
+Verifying access rights...
+Found the space tutorial_apm_simple with name (None) and description (None).
+  - created_time: 2023-06-29 10:41:41.282000
+  - last_updated_time: 2023-06-29 10:41:46.139000
+Found 3 containers in the space tutorial_apm_simple:
+  Asset
+  WorkItem
+  WorkOrder
+Found data model tutorial_apm_simple in space tutorial_apm_simple:
+  version: 1
+  global: False
+  description: None
+  created_time: 2023-06-29 10:41:41.963000
+  last_updated_time: 2023-06-29 10:41:47.444000
+  tutorial_apm_simple has 3 views:
+    Asset, version: aea363cc6d37ba
+       - properties: 11
+       - used for nodes
+       - implements: None
+       - direct relation 1:1 parent --> (tutorial_apm_simple, Asset, aea363cc6d37ba)
+       - edge relation 1:MANY children -- outwards --> (tutorial_apm_simple, Asset, aea363cc6d37ba)
+    WorkOrder, version: 5f8749a07c2940
+       - properties: 21
+       - used for nodes
+       - implements: None
+       - edge relation 1:MANY workItems -- outwards --> (tutorial_apm_simple, WorkItem, f9c8dbdc9ddb2d)
+       - edge relation 1:MANY linkedAssets -- outwards --> (tutorial_apm_simple, Asset, aea363cc6d37ba)
+    WorkItem, version: f9c8dbdc9ddb2d
+       - properties: 10
+       - used for nodes
+       - implements: None
+       - direct relation 1:1 workOrder --> (tutorial_apm_simple, WorkOrder, 5f8749a07c2940)
+       - edge relation 1:MANY linkedAssets -- outwards --> (tutorial_apm_simple, Asset, aea363cc6d37ba)
+Total direct relations: 2
+Total edge relations: 4
+------------------------------------------
+Found in total 15628 edges in space tutorial_apm_simple spread over 4 types:
+  WorkOrder.workItems: 1536
+  WorkItem.linkedAssets: 6494
+  WorkOrder.linkedAssets: 6493
+  Asset.children: 1105
+------------------------------------------
+Found in total 3961 nodes in space tutorial_apm_simple across all views and containers.
+  1105 nodes of view Asset.
+  1314 nodes of view WorkOrder.
+  1536 nodes of view WorkItem.
+```
+
 ## About the examples
 
 This library of examples will be continuously maintained and expanded.

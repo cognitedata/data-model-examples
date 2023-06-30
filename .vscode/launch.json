@@ -28,8 +28,9 @@
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
                 "apm_simple",
+                //"--dry-run",
                 "--delete",
-                "transformations" //"raw,timeseries,files,datamodel"
+                "datamodel" //"raw,timeseries,transformations,files,datamodel"
             ],
             "console": "integratedTerminal",
             "justMyCode": false
@@ -45,6 +46,19 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": false
-        }
+        },
+        {
+            "name": "Python: describe_datamodel.py",
+            "type": "python",
+            "request": "launch",
+            "program": "describe_datamodel.py",
+            "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
+            "args": [
+                "tutorial_apm_simple",
+                "tutorial_apm_simple",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
     ]
 }
