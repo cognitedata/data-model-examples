@@ -1,9 +1,9 @@
 {
     "externalId": "Asset",
     "space": "{{cookiecutter.apm_simple_space}}",
-    "version": "aea363cc6d37ba",
-    "createdTime": 1687939251483,
-    "lastUpdatedTime": 1687939251483,
+    "version": "8069f1498c7f9a",
+    "createdTime": 1688131650371,
+    "lastUpdatedTime": 1688131650371,
     "writable": true,
     "usedFor": "node",
     "isGlobal": false,
@@ -15,7 +15,7 @@
                     "type": "view",
                     "space": "{{cookiecutter.apm_simple_space}}",
                     "externalId": "Asset",
-                    "version": "aea363cc6d37ba"
+                    "version": "8069f1498c7f9a"
                 }
             },
             "container": {
@@ -166,6 +166,36 @@
             "autoIncrement": false,
             "name": "updatedDate"
         },
+        "metrics": {
+            "type": {
+                "type": "timeseries",
+                "list": true
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "Asset"
+            },
+            "containerPropertyIdentifier": "metrics",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "metrics"
+        },
+        "documents": {
+            "type": {
+                "type": "file",
+                "list": true
+            },
+            "container": {
+                "type": "container",
+                "space": "{{cookiecutter.apm_simple_space}}",
+                "externalId": "Asset"
+            },
+            "containerPropertyIdentifier": "documents",
+            "nullable": true,
+            "autoIncrement": false,
+            "name": "documents"
+        },
         "children": {
             "type": {
                 "space": "{{cookiecutter.apm_simple_space}}",
@@ -175,7 +205,7 @@
                 "type": "view",
                 "space": "{{cookiecutter.apm_simple_space}}",
                 "externalId": "Asset",
-                "version": "aea363cc6d37ba"
+                "version": "8069f1498c7f9a"
             },
             "name": "children",
             "direction": "outwards"

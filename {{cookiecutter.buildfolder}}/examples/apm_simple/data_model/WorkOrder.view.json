@@ -1,9 +1,9 @@
 {
     "externalId": "WorkOrder",
     "space": "{{cookiecutter.apm_simple_space}}",
-    "version": "5f8749a07c2940",
-    "createdTime": 1687939251483,
-    "lastUpdatedTime": 1687939251483,
+    "version": "659c59a4a8afe9",
+    "createdTime": 1688131650371,
+    "lastUpdatedTime": 1688131650371,
     "writable": true,
     "usedFor": "node",
     "isGlobal": false,
@@ -309,7 +309,7 @@
                 "type": "view",
                 "space": "{{cookiecutter.apm_simple_space}}",
                 "externalId": "WorkItem",
-                "version": "f9c8dbdc9ddb2d"
+                "version": "94d2b7121128a2"
             },
             "name": "workItems",
             "direction": "outwards"
@@ -323,7 +323,7 @@
                 "type": "view",
                 "space": "{{cookiecutter.apm_simple_space}}",
                 "externalId": "Asset",
-                "version": "aea363cc6d37ba"
+                "version": "8069f1498c7f9a"
             },
             "name": "linkedAssets",
             "direction": "outwards"

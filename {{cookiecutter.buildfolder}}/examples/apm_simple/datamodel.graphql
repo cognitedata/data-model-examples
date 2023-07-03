@@ -10,6 +10,8 @@ type Asset {
   isCriticalLine: Boolean
   isActive: Boolean
   updatedDate: Timestamp
+  metrics:[TimeSeries]
+  documents: [File]
 }
 
 type WorkOrder {

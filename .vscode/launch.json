@@ -11,7 +11,7 @@
             "program": "load_data.py",
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
-                "movie_actors",
+                "apm_simple",
                 "--drop",
                 "--load",
                 "datamodel"
@@ -56,6 +56,20 @@
             "args": [
                 "tutorial_apm_simple",
                 "tutorial_apm_simple",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: dump_datamodel.py",
+            "type": "python",
+            "request": "launch",
+            "program": "dump_datamodel.py",
+            "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
+            "args": [
+                "tutorial_apm_simple",
+                "tutorial_apm_simple",
+                "tmp"
             ],
             "console": "integratedTerminal",
             "justMyCode": false
