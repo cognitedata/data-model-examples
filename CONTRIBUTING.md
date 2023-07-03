@@ -115,6 +115,6 @@ You can also run `cookiecutter --replay .` This is very useful if you are editin
 
 The `dump_datamodel.py` script is used to dump the data model from a Cognite Data Fusion tenant. It takes
 four arguments: <space> <model_name> <version> <target_dir>.
-In it's current state, the format it dumps is NOT compatible with the format needed for load_data.py to
+Currently, the format it dumps is NOT compatible with the format needed for load_data.py to
 load the data model. It is a work in progress and shared here as one of several tools that allow you
 to understand the inner workings of data modeling in CDF in a more hands-on way.
