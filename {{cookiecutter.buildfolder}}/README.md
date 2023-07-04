@@ -10,15 +10,30 @@ directory.
 
 * N/A
 
-## Set up the CDF project and get credentials
+## Set up of the CDF project and credentials
 
-**You need a CDF project and client credentials for a service account/principal that has access to the project
-through a CDF access group (see below for needed permissions). You get the CDF project from
-<support@cognite.com> and you configure the service principal/account in the identity provider (e.g. Azure Active Directory)
-that the CDF project has been configured to use.**
+> If you want to sign up for a trial project, go to <https://docs.cognite.com/trial>.
 
-See the Python SDK [intro doc](https://developer.cognite.com/dev/guides/sdk/python/python_auth_oidc/) for how to get the credentials.
-The minimum CDF credentials needed are (note that if you scope to data sets, you need to make sure you include ALL data sets for ALL
+The default configuration here has been adapted to these trial projects. The default identity provider (IDP)
+URLs and IDP_CLIENT_ID are all set up to use the Cognite trial project identity provider.
+The only settings you need
+to change when running `cookiecutter` (see below) are the CDF_PROJECT, IDP_CLIENT_ID, and the IDP_CLIENT_SECRET.
+Your trial project starts with `trial-` and then a sequence of numbers and
+letters. You can find the project name in the email you received when you signed up for the trial project
+or in the URL in your browser when you log into <https://cog-trials.fusion.cognite.com>.
+The client credentials were also forwarded to you in the trial project welcome email.
+
+If you are using a standard CDF project and not a trial project, you should change the IDP_* settings to
+match your project's identity provider settings. E.g. if you use Microsoft Active Directory, the
+IDP_TOKEN_URL setting should be in the format:
+`"https://login.microsoftonline.com/{{cookiecutter.IDP_TENANT_ID}}/oauth2/v2.0/token"`
+
+**If you don't have a project and you are a customer or partner, you get the CDF project
+from <support@cognite.com>. See the Python SDK [intro doc](https://developer.cognite.com/dev/guides/sdk/python/python_auth_oidc/) for how to get the credentials.**
+
+**Also note! If you are using a trial project, the below has already been set up for you.**
+
+The minimum CDF access scopes needed are (note that if you scope to data sets, you need to make sure you include ALL data sets for ALL
 the examples you want to run or use the same data set for all examples):
 
 * RAW: LIST, READ, WRITE either on all or scoped to the databases you configure for all examples

@@ -60,7 +60,6 @@ class CDFToolConfig:
                 )
                 logger.error(e)
                 exit(1)
-
         self._client = CogniteClient(
             ClientConfig(
                 client_name=client_name,
@@ -72,6 +71,7 @@ class CDFToolConfig:
                     # client secret should not be stored in-code, so we load it from an environment variable
                     client_secret=os.environ["IDP_CLIENT_SECRET"],
                     scopes=[os.environ["IDP_SCOPES"]],
+                    audience=os.environ["IDP_AUDIENCE"],
                 ),
             )
         )
