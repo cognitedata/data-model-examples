@@ -284,7 +284,7 @@ def load_transformations(file: str, drop: bool) -> None:
         )
         tmp = "tmp/"
     configs = parse_transformation_configs(
-        f"./examples/{ToolGlobals.example}/transformations/" + tmp + tmp
+        f"./examples/{ToolGlobals.example}/transformations/" + tmp
     )
     if len(tmp) > 0:
         os.system(f"rm -rf ./examples/{ToolGlobals.example}/transformations/tmp")
