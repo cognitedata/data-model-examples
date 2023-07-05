@@ -15,12 +15,38 @@
 import json
 import os
 import logging
+from requests_oauthlib import OAuth2Session
 from cognite.client.exceptions import CogniteAuthError
 from cognite.client.data_classes.data_sets import DataSet
 from cognite.client import CogniteClient, ClientConfig
-from cognite.client.credentials import OAuthClientCredentials
+from cognite.client.credentials import OAuthClientCredentials, Token
 
 logger = logging.getLogger(__name__)
+
+import http.server
+
+
+class AuthPath:
+    def __init__(self) -> None:
+        self.path = ""
+
+
+# This is a callback server to get the authorization code from the browser
+# It listens on http, but returns https to avoid that the oauth2 library
+# complains about the uri not being https.
+def getCallback():
+    class ServerHandler(http.server.SimpleHTTPRequestHandler):
+        def do_GET(self):
+            AuthPath.path = self.path
+            self.send_response(200, "Success!")
+
+    HOST = "localhost"
+    PORT = 53000
+    Handler = ServerHandler
+    with http.server.HTTPServer((HOST, PORT), Handler) as httpd:
+        print("Web Server listening at => " + HOST + ":" + str(PORT))
+        httpd.handle_request()
+        return "https://localhost:5300" + AuthPath.path
 
 
 # To add a new example, add a new entry here with the same name as the folder
@@ -60,19 +86,63 @@ class CDFToolConfig:
                 )
                 logger.error(e)
                 exit(1)
+        # Use lack of IDP_CLIENT_SECRET to determine if we should use the
+        # interactive authorization flow.
+        if (
+            "IDP_CLIENT_SECRET" in os.environ
+            and len(os.environ["IDP_CLIENT_SECRET"]) > 0
+        ):
+            # This is the default configuration for production projects.
+            # You then don't have to log in interactively.
+            credentials = OAuthClientCredentials(
+                token_url=os.environ["IDP_TOKEN_URL"],
+                client_id=os.environ["IDP_CLIENT_ID"],
+                # client secret should not be stored in-code, so we load it from an environment variable
+                client_secret=os.environ["IDP_CLIENT_SECRET"],
+                scopes=[os.environ["IDP_SCOPES"]],
+                audience=os.environ["IDP_AUDIENCE"],
+            )
+        else:
+            # For trial projects (which are using Authorization Flow), we
+            # need to use the interactive authorization flow.
+            # NOTE!! The standard Python SDK uses MSAL for OAuth2, a library
+            # for ActiveDirectory. The MSAL interactive flow is only supported
+            # for ActiveDirectory as an IDP. Hence, we use a separate library
+            # for OAuth2, requests_oauthlib, to do the interactive flow.
+            # And then we inject the token into the CDF Python SDK using Token()
+            # as credentials.
+            credentials = OAuth2Session(
+                # This client_id is for the Auth0 service principal used for all
+                # trial projects. It is not a secret, and can be used by anyone.
+                client_id="HkPh5dLe4CF0VOksCYGGrrxjTQ8gCPVL",
+                # We need to use these scopes and not the default scope as we are using
+                # the Auth0 service principal to authenticate with your user account,
+                # and the token will then impersonate the user account.
+                scope=["IDENTITY", "user_impersonation"],
+                redirect_uri="http://localhost:53000",
+            )
+            authorization_url, _ = credentials.authorization_url(
+                url=os.environ["IDP_AUTHORITY_URL"],
+                audience=os.environ["IDP_AUDIENCE"],
+            )
+            print(
+                f"Please click on this link and login to authorize access (THE BROWSER WILL "
+                + f"THEN SHOW AN ERROR, just return here): \n{authorization_url}"
+            )
+            authorization_response = getCallback()
+            token = credentials.fetch_token(
+                token_url=os.environ["IDP_TOKEN_URL"],
+                authorization_response=authorization_response,
+                include_client_id=True,
+            )
+            credentials = Token(token.get("access_token", ""))
 
         self._client = CogniteClient(
             ClientConfig(
                 client_name=client_name,
                 base_url=os.environ["CDF_URL"],
                 project=os.environ["CDF_PROJECT"],
-                credentials=OAuthClientCredentials(
-                    token_url=os.environ["IDP_TOKEN_URL"],
-                    client_id=os.environ["IDP_CLIENT_ID"],
-                    # client secret should not be stored in-code, so we load it from an environment variable
-                    client_secret=os.environ["IDP_CLIENT_SECRET"],
-                    scopes=[os.environ["IDP_SCOPES"]],
-                ),
+                credentials=credentials,
             )
         )
 
