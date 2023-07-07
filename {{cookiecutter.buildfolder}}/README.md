@@ -50,7 +50,7 @@ Each of the folders with examples has a README.md with more details, but you wil
 examples.
 
 1. Install Python and [pip](https://packaging.python.org/en/latest/tutorials/installing-packages/)
-    if you do not already have them.
+    if you do not already have them. The examples are tested with Python 3.10 and 3.11. We recommend 3.11.
 
 1. Change directory into the `./build` folder
 

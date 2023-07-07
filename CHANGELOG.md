@@ -2,6 +2,11 @@
 
 **Please add new changelog items at the top!**
 
+## Jul 7, 2023
+
+- Add "audience" to the OAuth2 client config to support Auth0 without default audience set.
+- [BREAKING] Upgrade to use python 3.11 as 3.10 does not have binary distributions anymore.
+
 ## June 30, 2023
 
 - Add direct loading of data model from load_data.py
