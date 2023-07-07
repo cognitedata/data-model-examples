@@ -4,8 +4,8 @@
 
 ## Jul 7, 2023
 
-- Add "audience" to the OAuth2 client config to support Auth0 without default audience set.
-- [BREAKING] Upgrade to use python 3.11 as 3.10 does not have binary distributions anymore.
+- Add "audience" to the OAuth2 client config to support Auth0 without the default audience set.
+- [BREAKING] Upgrade to Python 3.11 as 3.10 no longer has binary distributions.
 
 ## June 30, 2023
 
