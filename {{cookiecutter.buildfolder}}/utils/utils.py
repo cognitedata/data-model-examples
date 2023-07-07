@@ -60,7 +60,6 @@ class CDFToolConfig:
                 )
                 logger.error(e)
                 exit(1)
-
         self._client = CogniteClient(
             ClientConfig(
                 client_name=client_name,
@@ -72,6 +71,7 @@ class CDFToolConfig:
                     # client secret should not be stored in-code, so we load it from an environment variable
                     client_secret=os.environ["IDP_CLIENT_SECRET"],
                     scopes=[os.environ["IDP_SCOPES"]],
+                    audience=os.environ["IDP_AUDIENCE"],
                 ),
             )
         )
@@ -141,8 +141,8 @@ class CDFToolConfig:
             # Using the token/inspect endpoint to check if the client has access to the project.
             # The response also includes access rights, which can be used to check if the client has the
             # correct access for what you want to do.
-            resp = self.client.get("/api/v1/token/inspect").json()
-            if resp is None or len(resp) == 0:
+            resp = self.client.iam.token.inspect()
+            if resp is None or len(resp.capabilities) == 0:
                 raise CogniteAuthError(
                     f"Don't have any access rights. Check credentials."
                 )
@@ -151,7 +151,7 @@ class CDFToolConfig:
         # iterate over all the capabilties we need
         for cap, actions in capabilities.items():
             # Find the right capability in our granted capabilities
-            for k in resp.get("capabilities", []):
+            for k in resp.capabilities:
                 if len(k.get(cap, {})) == 0:
                     continue
                 # For each of the actions (e.g. READ or WRITE) we need, check if we have it
@@ -203,7 +203,9 @@ class CDFToolConfig:
             if data_set is not None:
                 return data_set.id
         except Exception as e:
-            raise e
+            raise CogniteAuthError(
+                f"Don't have correct access rights. Need READ and WRITE on datasetsAcl."
+            )
         try:
             # name can be empty, but is useful for UI purposes
             data_set = DataSet(
@@ -216,4 +218,7 @@ class CDFToolConfig:
             data_set = client.data_sets.create(data_set)
             return data_set.id
         except Exception as e:
-            raise e
+            raise CogniteAuthError(
+                f"Don't have correct access rights. Need also WRITE on "
+                + "datasetsAcl or that the data set {get_dataset_name()} has been created."
+            )
