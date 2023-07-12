@@ -64,6 +64,9 @@ files = [
     {file = "binaryornot-0.4.4.tar.gz", hash = "sha256:359501dfc9d40632edc9fac890e19542db1a287bbcfa58175b66658392018061"},
 ]
 
+[package.dependencies]
+chardet = ">=3.0.2"
+
 [[package]]
 name = "certifi"
 version = "2023.5.7"
@@ -262,13 +265,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cognite-sdk"
-version = "6.5.8"
+version = "6.8.0"
 description = "Cognite Python SDK"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "cognite_sdk-6.5.8-py3-none-any.whl", hash = "sha256:9782bfed493fe87a998418015d7f7d251e5d4fd02c9deeaec845823d7092b404"},
-    {file = "cognite_sdk-6.5.8.tar.gz", hash = "sha256:77c0882f2d610157ae584d253120f0b5a0fb6fa9fffbe99f2fe1a90bc8b89515"},
+    {file = "cognite_sdk-6.8.0-py3-none-any.whl", hash = "sha256:8fc30ab20ce73c8e457ccbea1aa36c34429098a8a5341c9667026fc46c451a57"},
+    {file = "cognite_sdk-6.8.0.tar.gz", hash = "sha256:f701afc82f8ea7ac73d2386f7cd711137b6e7d505662542a43579ba1218c2044"},
 ]
 
 [package.dependencies]
@@ -288,6 +291,7 @@ numpy = ["numpy (>=1.20,<2.0)"]
 pandas = ["backports-zoneinfo[tzdata] (>=0.2.1)", "pandas (>=1.4)"]
 pyodide = ["pyodide-http (>=0.2.0,<0.3.0)"]
 sympy = ["sympy"]
+yaml = ["PyYAML (>=6.0,<7.0)"]
 
 [[package]]
 name = "colorama"
@@ -982,7 +986,7 @@ name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 files = [
     {file = "pycparser-2.21-py2.py3-none-any.whl", hash = "sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9"},
     {file = "pycparser-2.21.tar.gz", hash = "sha256:e644fdec12f7872f86c58ff790da456218b10f863970249516d60a5eaca77206"},
@@ -1504,4 +1508,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "83e3a77e691bedc182e7fbcc22b60993ecca22f1e5059ade5d801d151a8ad395"
+content-hash = "c7a7ea03cc593560a13dfe5fd13cc5823afa8c5d0d57f6d26ad0c4ccc42fd6ed"
