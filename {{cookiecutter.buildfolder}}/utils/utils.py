@@ -60,21 +60,24 @@ class CDFToolConfig:
                 )
                 logger.error(e)
                 exit(1)
-        self._client = CogniteClient(
-            ClientConfig(
-                client_name=client_name,
-                base_url=os.environ["CDF_URL"],
-                project=os.environ["CDF_PROJECT"],
-                credentials=OAuthClientCredentials(
-                    token_url=os.environ["IDP_TOKEN_URL"],
-                    client_id=os.environ["IDP_CLIENT_ID"],
-                    # client secret should not be stored in-code, so we load it from an environment variable
-                    client_secret=os.environ["IDP_CLIENT_SECRET"],
-                    scopes=[os.environ["IDP_SCOPES"]],
-                    audience=os.environ["IDP_AUDIENCE"],
-                ),
+        if "CDF_URL" not in os.environ:
+            self._client = CogniteClient()
+        else:
+            self._client = CogniteClient(
+                ClientConfig(
+                    client_name=client_name,
+                    base_url=os.environ["CDF_URL"],
+                    project=os.environ["CDF_PROJECT"],
+                    credentials=OAuthClientCredentials(
+                        token_url=os.environ["IDP_TOKEN_URL"],
+                        client_id=os.environ["IDP_CLIENT_ID"],
+                        # client secret should not be stored in-code, so we load it from an environment variable
+                        client_secret=os.environ["IDP_CLIENT_SECRET"],
+                        scopes=[os.environ["IDP_SCOPES"]],
+                        audience=os.environ["IDP_AUDIENCE"],
+                    ),
+                )
             )
-        )
 
     @property
     # Flag set if something that should have worked failed if a data set is
