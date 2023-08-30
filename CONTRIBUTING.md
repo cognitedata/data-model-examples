@@ -118,3 +118,14 @@ four arguments: <space> <model_name> <version> <target_dir>.
 Currently, the format it dumps is NOT compatible with the format needed for load_data.py to
 load the data model. It is a work in progress and shared here as one of several tools that allow you
 to understand the inner workings of data modeling in CDF in a more hands-on way.
+
+## Deploying the repo
+
+This repo does not currently have a CI/CD pipeline, so merging to main will make the changes immediately available
+to users who use cookiecutter. It should probably by run on a regular basis against
+a test project to avoid regressions. This is a todo.
+
+When changing the examples and utils directories, a Cognite engineer should update these two directories
+for the JupyterLite notebooks in Fusion UI (the dshublite private repo).
+It is a direct copy of the files in this repo with
+a CI/CD pipeline to deploy a new version of JupyterLite.

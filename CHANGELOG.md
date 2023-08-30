@@ -2,6 +2,11 @@
 
 **Please add new changelog items at the top!**
 
+## Aug 24, 2023
+
+- Factor out all functions into the utils/ module to make them easy to load from other scripts.
+- Support and validate use of the utils/ module from JupyterLite notebooks in Fusion UI.
+
 ## Jul 7, 2023
 
 - Add "audience" to the OAuth2 client config to support Auth0 without the default audience set.
