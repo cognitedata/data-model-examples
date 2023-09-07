@@ -19,7 +19,7 @@ def load_datamodel(ToolGlobals: CDFToolConfig, drop: bool) -> None:
         # Read directly into a string.
         datamodel = file.read()
     if drop:
-        delete_datamodel(instances_only=False)
+        delete_datamodel(ToolGlobals, instances_only=False)
     # Clear any delete errors
     ToolGlobals.failed = False
     client = ToolGlobals.verify_client(
@@ -89,7 +89,7 @@ def load_datamodel_dump(ToolGlobals: CDFToolConfig, drop: bool) -> None:
             containers[v.external_id] = Container.load(json.load(file)).as_apply()
 
     if drop:
-        delete_datamodel(instances_only=False)
+        delete_datamodel(ToolGlobals, instances_only=False)
     # Clear any delete errors
     ToolGlobals.failed = False
     client = ToolGlobals.verify_client(
