@@ -72,14 +72,14 @@ if _debug_status or _jupyter:
         client_name=_client_name,
         config={
             "movie_actors": {
-                "raw_db": "test_movies",
-                "data_set": "tutorial_movies_dataset",
+                "raw_db": "tutorial_movies",
+                "data_set": "tutorial_movies",
                 "data_set_desc": "Data set for the movies-actor tutorial",
                 "model_space": "tutorial_movies",
                 "data_model": "tutorial_MovieDM",
             },
             "apm_simple": {
-                "raw_db": "test_apm_simple",
+                "raw_db": "tutorial_apm",
                 "data_set": "Valhall_System_23",
                 "data_set_desc": "Valhall_System_23",
                 "model_space": "tutorial_apm_simple",
