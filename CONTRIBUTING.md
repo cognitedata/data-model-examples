@@ -17,10 +17,10 @@ The structure should be the following under the `examples/` directory:
 * make a folder with the name of the example. This name is used throughout as a reference for
     the example.
 * put all the data in the `data` directory with each data type in a sub-directory.
-* YAML config files for transformations should be in the `transformations` directory
+* YAML config files for transformations should be in the `transformations` directory. These are exported easily
+    from each transformation in the `Integrate - Transform Data` meny in the Fusion UI (`CLI Manifest``).
 * a `datamodel.graphql` file with the CDF data model to load should be in the root
-    of the example directory
-* Copy and adapt the scripts in e.g. `apm_simple` directory.
+    of the example directory. This is exported from your data model in the Fusion UI visual data modeling editor.
 
 ## To add a new example
 
@@ -50,9 +50,12 @@ The structure should be the following under the `examples/` directory:
 
 ### A note on the data_model json files
 
-The json files found in the data_model folder consist of the datamodel.json file that needs to contain the
-data model as exported from the `/models/datamodels/byids` API.
-For each of the views in the data model, there needs to a `<view>.container.json` and a `<view>.view.json file`. These are exported from `/models/containers` and `/models/views/byids` respectively.
+> The scripts will default load the `datamodel.graphql`. The json files in the `data_model` directory
+> are not used unless you use the `load_datamodel_dump()` function in `load_data.py` in utils/.
+> This function is used by `restore_datamodel.py`.
+
+The json files found in the data_model folder are basically a dump of the data model in CDF.
+You can use the `dump_datamodel.py` script (see below) to dump the data model from a CDF tenant in this format.
 
 ## Debugging python scripts
 
@@ -64,32 +67,39 @@ do the following:
 2. Bypass the inventory.json file by using a debug hardcoded configuration for your example in
     `utils/__init__.py` (see below how)
 3. If you use Visual Studio Code, debug configurations can be found in `.vscode/launch.json`
-4. Start debugging the regular way. The debug status will be picked up and the config and .enf file will be overridden.
+4. Start debugging the regular way. The debug status will be picked up and the config and .env file will be overridden.
 
 You can see how the examples_config dict is overridden and loads the root .env instead of the .env
 in the `{{cookiecutter.buildfolder}}/utils/__init__.py` file:
 
 ```python
-# Load .env in current folder
-load_dotenv()
-if debug_status:
-    logger.warning("WARNING!!!! Debugging is active. Using .env from repo root.")
-    # If you debug within the {{cookiecutter.buildfolder}}, you will already have a .env file as a template there (git controlled).
-    # Rather use .env from the repo root (git ignored)
-    # Override...
-    load_dotenv("../.env")
+if _envfile and not _jupyter:
+    from dotenv import load_dotenv
+
+    if _debug_status:
+        # If you debug within the {{cookiecutter.buildfolder}}, you will already have a .env file as a template there (git controlled).
+        # Rather use .env from the repo root (git ignored)
+        # Override...
+        load_dotenv("../.env")
+    else:
+        load_dotenv()
+if _debug_status or _jupyter:
+    if _debug_status:
+        logger.warning("WARNING!!!! Debugging is active. Using .env from repo root.")
     ToolGlobals = CDFToolConfig(
-        client_name=client_name,
+        client_name=_client_name,
         config={
             "movie_actors": {
-                "raw_db": "test_movies",
-                "data_set": "tutorial_movies_dataset",
+                "raw_db": "tutorial_movies",
+                "data_set": "tutorial_movies",
+                "data_set_desc": "Data set for the movies-actor tutorial",
                 "model_space": "tutorial_movies",
                 "data_model": "tutorial_MovieDM",
             },
             "apm_simple": {
-                "raw_db": "test_apm_simple",
+                "raw_db": "tutorial_apm",
                 "data_set": "Valhall_System_23",
+                "data_set_desc": "Valhall_System_23",
                 "model_space": "tutorial_apm_simple",
                 "data_model": "tutorial_apm_simple",
             },
@@ -97,7 +107,7 @@ if debug_status:
     )
 else:
     # ToolGlobals is a singleton that is loaded once as this is a python module
-    ToolGlobals = CDFToolConfig(client_name=client_name)
+    ToolGlobals = CDFToolConfig(client_name=_client_name)
 ```
 
 ## Alternative way to run if you clone the repo
@@ -114,16 +124,17 @@ You can also run `cookiecutter --replay .` This is very useful if you are editin
 ## dump_datamodel.py
 
 The `dump_datamodel.py` script is used to dump the data model from a Cognite Data Fusion tenant. It takes
-four arguments: <space> <model_name> <version> <target_dir>.
-Currently, the format it dumps is NOT compatible with the format needed for load_data.py to
-load the data model. It is a work in progress and shared here as one of several tools that allow you
-to understand the inner workings of data modeling in CDF in a more hands-on way.
+four arguments: <space> <model_name> <version> <target_dir>. You should dump it to a directory called
+`data_model` under examples/<your_model>/.
+
+If you then use the script `restore_datamodel.py <your_model>` to load the data model, you have
+basically done a backup and restore of the data model. Please note that the data model dump (json files) is
+not used default by the CLI tool to load the data model.
 
 ## Deploying the repo
 
-This repo does not currently have a CI/CD pipeline, so merging to main will make the changes immediately available
-to users who use cookiecutter. It should probably by run on a regular basis against
-a test project to avoid regressions. This is a todo.
+This repo does not have a CI/CD pipeline, so merging to main will make the changes immediately available
+to users who use cookiecutter.
 
 When changing the examples and utils directories, a Cognite engineer should update these two directories
 for the JupyterLite notebooks in Fusion UI (the dshublite private repo).
