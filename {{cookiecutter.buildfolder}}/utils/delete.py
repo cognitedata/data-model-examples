@@ -176,7 +176,6 @@ def delete_datamodel(
             f"Failed to retrieve data model {model_name} for example {ToolGlobals.example}"
         )
         print(e)
-        ToolGlobals.failed = True
         return
     if len(data_model) == 0:
         print(
