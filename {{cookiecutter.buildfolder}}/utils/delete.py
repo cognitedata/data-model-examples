@@ -45,7 +45,6 @@ def delete_raw(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
         print(
             f"Failed to delete {raw_db} for example {ToolGlobals.example}. It may not exist."
         )
-        ToolGlobals.failed = True
 
 
 def delete_files(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
@@ -77,7 +76,6 @@ def delete_files(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
     print(
         f"Failed to delete files for example {ToolGlobals.example}. They may not exist."
     )
-    ToolGlobals.failed = True
 
 
 def delete_timeseries(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
@@ -122,7 +120,6 @@ def delete_timeseries(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
         print(
             f"Failed to delete timeseries for example {ToolGlobals.example}. They may not exist."
         )
-        ToolGlobals.failed = True
 
 
 def delete_transformations(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
@@ -143,7 +140,6 @@ def delete_transformations(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
         print(
             f"Failed to delete transformations for example {ToolGlobals.example}. They may not exist."
         )
-        ToolGlobals.failed = True
         return
 
 
