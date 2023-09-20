@@ -28,7 +28,7 @@ def delete_raw(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
     raw_db = ToolGlobals.config("raw_db")
     if raw_db == "":
         print(
-            f"Could not find raw_db in inventory.py for example {ToolGlobals.example}."
+            f"Could not find RAW db {raw_db} in inventory.py for example {ToolGlobals.example}."
         )
         ToolGlobals.failed = True
         return
@@ -40,22 +40,15 @@ def delete_raw(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
                     client.raw.tables.delete(raw_db, table.name)
         if not dry_run:
             client.raw.databases.delete(raw_db)
-        print(f"Deleted {raw_db} for example {ToolGlobals.example}.")
+        print(f"Deleted RAW db {raw_db} for example {ToolGlobals.example}.")
     except:
         print(
-            f"Failed to delete {raw_db} for example {ToolGlobals.example}. It may not exist."
+            f"Failed to delete RAW db {raw_db} for example {ToolGlobals.example}. It may not exist."
         )
-        ToolGlobals.failed = True
 
 
 def delete_files(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
-    try:
-        client = ToolGlobals.verify_client(capabilities={"filesAcl": ["READ", "WRITE"]})
-    except Exception as e:
-        print(f"Failed to verify client for example {ToolGlobals.example}")
-        print(e)
-        ToolGlobals.failed = True
-        return
+    client = ToolGlobals.verify_client(capabilities={"filesAcl": ["READ", "WRITE"]})
     files = []
     # Pick up all the files in the files folder of the example.
     for _, _, filenames in os.walk(f"./examples/{ToolGlobals.example}/data/files"):
@@ -77,7 +70,6 @@ def delete_files(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
     print(
         f"Failed to delete files for example {ToolGlobals.example}. They may not exist."
     )
-    ToolGlobals.failed = True
 
 
 def delete_timeseries(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
@@ -122,7 +114,6 @@ def delete_timeseries(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
         print(
             f"Failed to delete timeseries for example {ToolGlobals.example}. They may not exist."
         )
-        ToolGlobals.failed = True
 
 
 def delete_transformations(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
@@ -143,7 +134,6 @@ def delete_transformations(ToolGlobals: CDFToolConfig, dry_run=False) -> None:
         print(
             f"Failed to delete transformations for example {ToolGlobals.example}. They may not exist."
         )
-        ToolGlobals.failed = True
         return
 
 
@@ -176,13 +166,11 @@ def delete_datamodel(
             f"Failed to retrieve data model {model_name} for example {ToolGlobals.example}"
         )
         print(e)
-        ToolGlobals.failed = True
         return
     if len(data_model) == 0:
         print(
             f"Failed to retrieve data model {model_name} for example {ToolGlobals.example}"
         )
-        ToolGlobals.failed = True
         view_list = []
     else:
         view_list = [
