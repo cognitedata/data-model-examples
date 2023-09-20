@@ -18,7 +18,7 @@ import logging
 from cognite.client.exceptions import CogniteAuthError
 from cognite.client.data_classes.data_sets import DataSet
 from cognite.client import CogniteClient, ClientConfig
-from cognite.client.credentials import OAuthClientCredentials
+from cognite.client.credentials import OAuthClientCredentials, Token
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,16 @@ class CDFToolConfig:
                 )
                 logger.error(e)
                 exit(1)
-        if "CDF_URL" not in os.environ:
+        if "CDF_TOKEN" in os.environ:
+            self._client = CogniteClient(
+                ClientConfig(
+                    client_name=client_name,
+                    base_url=os.environ["CDF_URL"],
+                    project=os.environ["CDF_PROJECT"],
+                    credentials=Token(os.environ["CDF_TOKEN"]),
+                )
+            )
+        elif "CDF_URL" not in os.environ:
             self._client = CogniteClient()
         else:
             self._client = CogniteClient(
