@@ -15,7 +15,9 @@
 import os
 import json
 import pandas as pd
+from typing import List, Dict, Any
 from cognite.client.data_classes.time_series import TimeSeries
+from cognite.client.data_classes.iam import Group
 from .utils import CDFToolConfig
 from utils.transformations_config import parse_transformation_configs
 from utils.transformations_api import (
@@ -279,3 +281,42 @@ def load_transformations(ToolGlobals: CDFToolConfig, file: str, drop: bool) -> N
     print(
         f"Created {len(created_transformations)} transformations for example {ToolGlobals.example}."
     )
+
+
+def load_readwrite_group(
+    ToolGlobals: CDFToolConfig,
+    capabilities: List[Dict[str, Any]],
+    source_id="readwrite",
+) -> None:
+    client = ToolGlobals.verify_client(
+        capabilities={"groupsAcl": ["LIST", "READ", "CREATE", "DELETE"]}
+    )
+    try:
+        groups = client.iam.groups.list(all=True)
+    except Exception as e:
+        print(f"Failed to retrieve groups.")
+        ToolGlobals.failed = True
+        return
+    old_group_id = None
+    for group in groups:
+        if group.source_id == source_id:
+            old_group_id = group.id
+            break
+    try:
+        group = client.iam.groups.create(
+            Group(
+                name=source_id,
+                source_id=source_id,
+                capabilities=capabilities,
+            )
+        )
+    except Exception as e:
+        print(f"Failed to create group {source_id}.")
+        ToolGlobals.failed = True
+        return
+    if old_group_id:
+        try:
+            client.iam.groups.delete(id=old_group_id)
+        except Exception as e:
+            print(f"Failed to delete group {old_group_id}.")
+            ToolGlobals.failed = True

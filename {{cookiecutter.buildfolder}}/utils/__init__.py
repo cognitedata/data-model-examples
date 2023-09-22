@@ -14,6 +14,7 @@ from .load import (
     load_timeseries_datapoints,
     load_timeseries_metadata,
     load_transformations,
+    load_readwrite_group,
 )
 from .delete import (
     delete_datamodel,
