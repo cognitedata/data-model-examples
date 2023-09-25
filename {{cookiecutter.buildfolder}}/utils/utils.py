@@ -55,38 +55,71 @@ class CDFToolConfig:
                 with open(f"./inventory.json", "rt") as file:
                     self._config = json.load(file)
             except Exception as e:
-                logger.error(
-                    "Not able to load example inventory from inventory.json file."
+                logger.info(
+                    "Not loading configuration from inventory.json file, using 'default' as values."
                 )
-                logger.error(e)
-                exit(1)
+                self._config = {
+                    "default": {
+                        "raw_db": "default",
+                        "data_set": "default",
+                        "data_set_desc": "-",
+                        "model_space": "default",
+                        "data_model": "default",
+                    }
+                }
+                self._example = "default"
+        self._cluster = os.environ.get("CDF_CLUSTER", "api")
+        self._scopes = [
+            os.environ.get(
+                "IDP_SCOPES",
+                f"https://{self._cluster}.cognitedata.com/.default",
+            )
+        ]
+        self._cdf_url = os.environ.get(
+            "CDF_URL", f"https://{self._cluster}.cognitedata.com"
+        )
+        self._project = os.environ.get("CDF_PROJECT", "publicdata")
+        self._audience = os.environ.get(
+            "IDP_AUDIENCE", f"https://{self._cluster}.cognitedata.com"
+        )
+        # If CDF_TOKEN is set, we want to use that token instead of client credentials.
         if "CDF_TOKEN" in os.environ:
             self._client = CogniteClient(
                 ClientConfig(
                     client_name=client_name,
-                    base_url=os.environ["CDF_URL"],
-                    project=os.environ["CDF_PROJECT"],
+                    base_url=self._cdf_url,
+                    project=self._project,
                     credentials=Token(os.environ["CDF_TOKEN"]),
                 )
             )
         elif "CDF_URL" not in os.environ:
+            # If CDF_URL is not set, we may be in a Jupyter notebook in Fusion,
+            # and credentials are preset to logged in user.
             self._client = CogniteClient()
         else:
             self._client = CogniteClient(
                 ClientConfig(
                     client_name=client_name,
-                    base_url=os.environ["CDF_URL"],
-                    project=os.environ["CDF_PROJECT"],
+                    base_url=self._cdf_url,
+                    project=self._project,
                     credentials=OAuthClientCredentials(
                         token_url=os.environ["IDP_TOKEN_URL"],
                         client_id=os.environ["IDP_CLIENT_ID"],
                         # client secret should not be stored in-code, so we load it from an environment variable
                         client_secret=os.environ["IDP_CLIENT_SECRET"],
-                        scopes=[os.environ["IDP_SCOPES"]],
-                        audience=os.environ["IDP_AUDIENCE"],
+                        scopes=self._scopes,
+                        audience=self._audience,
                     ),
                 )
             )
+
+    def __str__(self):
+        return (
+            f"Cluster {self._cluster} with project {self._project}\n"
+            + f"CDF Url: {self._cdf_url}\n"
+            + f"Scopes: {self._scopes}\n"
+            + f"Audience: {self._audience}\n"
+        )
 
     @property
     # Flag set if something that should have worked failed if a data set is
@@ -202,7 +235,7 @@ class CDFToolConfig:
         """
 
         def get_dataset_name() -> str:
-            """Helper function to get the dataset name from the inventory.py file"""
+            """Helper function to get the dataset name from the inventory.json file"""
             return (
                 data_set_name
                 if data_set_name is not None and len(data_set_name) > 0
