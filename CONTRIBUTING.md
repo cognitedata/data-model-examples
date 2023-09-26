@@ -48,6 +48,31 @@ The structure should be the following under the `examples/` directory:
 
 1. Thanks a lot!!!
 
+### Format of inventory.json
+
+You can add any config attribute/value pair into the inventory.json file. The CDFToolConfig() class
+(instantiated in ToolsGlobal) has a .config("attr") method that will return the value of the attribute
+from inventory.json. You need to set .example = "<dataset>". Your dataset does not have to have a folder
+in the examples/ directory. You can use inventory.json to set up the configuration for the use of the
+Cognite CDF client. However, the various support functions for loading and deleting data will expect
+a set of attributes to be present in inventory.json. These are:
+
+```json
+{
+    "<dataset/example>": {
+        "raw_db": "{{cookiecutter.movie_actors_raw_db}}/<name of raw db for the dataset>",
+        "data_set": "{{cookiecutter.movie_actors_data_set}}/<name of data set used when loading>",
+        "data_set_desc": "{{cookiecutter.movie_actors_data_set_desc}}/<longer description of data set>",
+        "model_space": "{{cookiecutter.movie_actors_space}}/<the space to use for the data model>",
+        "data_model": "{{cookiecutter.movie_actors_datamodel}}/<the name of the data model>"
+    }
+}
+```
+
+As you can see above, you can use a cookiecutter template variable in the inventory.json file. This
+will allow the user to substitute their own values when running `cookiecutter`. Or, you can define
+a static value and inventory.json has to be edited.
+
 ### A note on the data_model json files
 
 > The scripts will default load the `datamodel.graphql`. The json files in the `data_model` directory

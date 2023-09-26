@@ -71,9 +71,38 @@ Before using cookiecutter, this file is [README.me](./{{cookiecutter.buildfolder
 
 ## Use this template tool for your own data
 
-If you want to create your own data set that you can load and delete at will, you can create
-your own example. Just follow the guidelines below on how to contribute to this repository, but
-just skip submitting your example as a pull request.
+When you do `import utils`, the code in `__init__.py` will execute and give you a pre-initiated
+ToolGlobals object. This object has a .client pre-configured CDF API client that you can
+use to call all the functions in the Cognite Python SDK. It will try to load the .env file
+with the credentials you have set up (either using cookiecutter or manually set the values in the .env
+file). It also detects if you are debugging, and if so, it will use the .env file in the root of the repo,
+not the one in the `{{cookicutter.buildfolder}}` (as that one is a template).
+
+So, ToolGlobals gives you a pre-configured CDF API client, a set of configuration attributes you can use
+in your app (and used by the utils/ functions), as well as a simple way of loading and deleting data sets
+using the utils/ functions. You simply set the example directory where your data is stored by setting
+`ToolGlobals.example="folder_name"` and there should be an entry in inventory.json configuring
+the data set, raw database, etc used when loading and deleting the data set.
+
+If you want to use the code from this repo for your own project, you can copy the utils/ directory
+and the inventory.json file to your own project, edit inventory.json with an entry for your project
+and do `import utils`. If you don't need config variables or load/delete data sets, you can create your
+own ToolGlobals for calling the CDF API client by either explicitly setting the config to an empty dict
+or deleting inventory.json:
+
+```python
+import utils
+ToolGlobals = CDFToolConfig(client_name="name_of_your_app", config={})
+ToolGlobals.client.raw.tables.list("raw_db_name")
+```
+
+If inventory.json is not present and you don't supply an empty config, all the variables will be set to `default`.
+The configuration attributes are only used by the functions found in utils/, not the CDF SDK client.
+
+[CONTRIBUTING.md](./CONTRIBUTING.md) explains more about how the data sets are set up.
+
+And finally, if you just want to get inspired and copy some code to configure your own CDF SDK client, `utils/utils.py`
+in `{{cookiecutter.buildfolder}}` is a good place to start.
 
 ## Contributing to this template repository
 
