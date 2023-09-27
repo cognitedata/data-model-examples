@@ -87,7 +87,7 @@ class CDFToolConfig:
             "CDF_URL", f"https://{self._cluster}.cognitedata.com"
         )
         # If CDF_TOKEN is set, we want to use that token instead of client credentials.
-        if self.environ("CDF_TOKEN", default=None, fail=False):
+        if self.environ("CDF_TOKEN", default=None, fail=False) is not None:
             self._client = CogniteClient(
                 ClientConfig(
                     client_name=client_name,
