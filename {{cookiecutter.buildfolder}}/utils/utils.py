@@ -15,6 +15,7 @@
 import json
 import os
 import logging
+from typing import List
 from cognite.client.exceptions import CogniteAuthError
 from cognite.client.data_classes.data_sets import DataSet
 from cognite.client import CogniteClient, ClientConfig
@@ -48,6 +49,7 @@ class CDFToolConfig:
         self._data_set_id: int = 0
         self._example = None
         self._failed = False
+        self._environ = {}
         if config is not None:
             self._config = config
         else:
@@ -68,45 +70,55 @@ class CDFToolConfig:
                     }
                 }
                 self._example = "default"
-        self._cluster = os.environ.get("CDF_CLUSTER", "api")
-        self._scopes = [
-            os.environ.get(
-                "IDP_SCOPES",
-                f"https://{self._cluster}.cognitedata.com/.default",
-            )
-        ]
-        self._cdf_url = os.environ.get(
+        if (
+            self.environ("CDF_URL", default=None, fail=False) is None
+            and self.environ("CDF_CLUSTER", default=None, fail=False) is None
+        ):
+            # If CDF_URL and CDF_CLUSTER are not set, we may be in a Jupyter notebook in Fusion,
+            # and credentials are preset to logged in user (no env vars are set!).
+            self._client = CogniteClient()
+            return
+
+        # CDF_CLUSTER and CDF_PROJECT are minimum requirements to know where to connect.
+        self._cluster = self.environ("CDF_CLUSTER")
+        self._project = self.environ("CDF_PROJECT")
+        # CDF_URL is optional, but if set, we use that instead of the default URL using cluster.
+        self._cdf_url = self.environ(
             "CDF_URL", f"https://{self._cluster}.cognitedata.com"
         )
-        self._project = os.environ.get("CDF_PROJECT", "publicdata")
-        self._audience = os.environ.get(
-            "IDP_AUDIENCE", f"https://{self._cluster}.cognitedata.com"
-        )
         # If CDF_TOKEN is set, we want to use that token instead of client credentials.
-        if "CDF_TOKEN" in os.environ:
+        if self.environ("CDF_TOKEN", default=None, fail=False):
             self._client = CogniteClient(
                 ClientConfig(
                     client_name=client_name,
                     base_url=self._cdf_url,
                     project=self._project,
-                    credentials=Token(os.environ["CDF_TOKEN"]),
+                    credentials=Token(self.environ("CDF_TOKEN")),
                 )
             )
-        elif "CDF_URL" not in os.environ:
-            # If CDF_URL is not set, we may be in a Jupyter notebook in Fusion,
-            # and credentials are preset to logged in user.
-            self._client = CogniteClient()
         else:
+            # We are now doing OAuth2 client credentials flow, so we need to set the
+            # required variables.
+            # We can infer scopes and audience from the cluster value.
+            # However, the URL to use to retrieve the token, as well as
+            # the client id and secret, must be set as environment variables.
+            self._scopes = self.environ(
+                "IDP_SCOPES",
+                [f"https://{self._cluster}.cognitedata.com/.default"],
+            )
+            self._audience = self.environ(
+                "IDP_AUDIENCE", f"https://{self._cluster}.cognitedata.com"
+            )
             self._client = CogniteClient(
                 ClientConfig(
                     client_name=client_name,
                     base_url=self._cdf_url,
                     project=self._project,
                     credentials=OAuthClientCredentials(
-                        token_url=os.environ["IDP_TOKEN_URL"],
-                        client_id=os.environ["IDP_CLIENT_ID"],
+                        token_url=self.environ("IDP_TOKEN_URL"),
+                        client_id=self.environ("IDP_CLIENT_ID"),
                         # client secret should not be stored in-code, so we load it from an environment variable
-                        client_secret=os.environ["IDP_CLIENT_SECRET"],
+                        client_secret=self.environ("IDP_CLIENT_SECRET"),
                         scopes=self._scopes,
                         audience=self._audience,
                     ),
@@ -115,10 +127,8 @@ class CDFToolConfig:
 
     def __str__(self):
         return (
-            f"Cluster {self._cluster} with project {self._project}\n"
-            + f"CDF Url: {self._cdf_url}\n"
-            + f"Scopes: {self._scopes}\n"
-            + f"Audience: {self._audience}\n"
+            f"Cluster {self._cluster} with project {self._project} and config:\n"
+            + json.dumps(self._environ, indent=2, sort_keys=True)
         )
 
     @property
@@ -145,9 +155,56 @@ class CDFToolConfig:
         self._data_set_id = 0
 
     def config(self, attr: str) -> str:
+        """Helper function to get configuration for an example (from inventory.json).
+
+        This function uses the example property in this class as a key to get the configuration,
+        so example must be set before calling the function.
+
+        Args:
+            attr: name of configuration variable
+
+        Yields:
+            Value of the configuration variable for example
+            Raises ValueError if configuration variable is not set
+        """
         if attr not in self._config.get(self._example, {}):
-            raise ValueError(f"{attr} property must be set in CDFToolConfig().")
+            raise ValueError(
+                f"{attr} property must be set in CDFToolConfig()/inventory.json."
+            )
         return self._config.get(self._example, {}).get(attr, "")
+
+    def environ(
+        self, attr: str, default: str | List[str] = None, fail: bool = True
+    ) -> str:
+        """Helper function to load variables from the environment.
+
+        Use python-dotenv to load environment variables from an .env file before
+        using this function.
+
+        If the environment variable has spaces, it will be split into a list of strings.
+
+        Args:
+            attr: name of environment variable
+            default: default value if environment variable is not set
+            fail: if True, raise ValueError if environment variable is not set
+
+        Yields:
+            Value of the environment variable
+            Raises ValueError if environment variable is not set and fail=True
+        """
+        if attr not in self._environ:
+            self._environ[attr] = os.environ.get(attr, None) or default
+            if self._environ[attr] is None and fail:
+                raise ValueError(
+                    f"{attr} property is not available as an environment variable and no default set."
+                )
+            else:
+                if (
+                    self._environ[attr] is not None
+                    and len(self._environ[attr].split(" ")) > 1
+                ):
+                    self._environ[attr] = self._environ[attr].split(" ")
+        return self._environ[attr]
 
     @property
     def example(self) -> str:

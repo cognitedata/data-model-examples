@@ -84,7 +84,8 @@ using the utils/ functions. You simply set the example directory where your data
 `ToolGlobals.example="folder_name"` and there should be an entry in inventory.json configuring
 the data set, raw database, etc used when loading and deleting the data set.
 
-If you want to use the code from this repo for your own project, you can copy the utils/ directory
+If you want to use the code from this repo for your own project (it loads .env and/or environment variables
+correclty), you can copy the utils/ directory
 and the inventory.json file to your own project, edit inventory.json with an entry for your project
 and do `import utils`. If you don't need config variables or load/delete data sets, you can create your
 own ToolGlobals for calling the CDF API client by either explicitly setting the config to an empty dict
@@ -98,6 +99,10 @@ ToolGlobals.client.raw.tables.list("raw_db_name")
 
 If inventory.json is not present and you don't supply an empty config, all the variables will be set to `default`.
 The configuration attributes are only used by the functions found in utils/, not the CDF SDK client.
+
+CDFToolConfig() also gives you .environ(attr, default, fail) which allows you to get environment variables,
+set a default, and optionally NOT fail if the variable is not found in the enviroment.
+You can easily see what is configured from the environment using `print(CDFToolConfig())`.
 
 [CONTRIBUTING.md](./CONTRIBUTING.md) explains more about how the data sets are set up.
 

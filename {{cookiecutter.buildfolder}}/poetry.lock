@@ -262,13 +262,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cognite-sdk"
-version = "6.25.3"
+version = "6.27.0"
 description = "Cognite Python SDK"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "cognite_sdk-6.25.3-py3-none-any.whl", hash = "sha256:1476f8f6323571a7afa9a290ac0bcda7bb05aefe698e56cbbf29ed26a095753f"},
-    {file = "cognite_sdk-6.25.3.tar.gz", hash = "sha256:d94cee3c0be6e6eaeb3f7530cb00b73373ae38b60f8b664a35856f6bbc31681d"},
+    {file = "cognite_sdk-6.27.0-py3-none-any.whl", hash = "sha256:a5700b450605a324a81571d418ae478334ff2e9f9b80b3f3759fda3fb521707f"},
+    {file = "cognite_sdk-6.27.0.tar.gz", hash = "sha256:1ff69ec727dad62343200c75125f8d22d03fc57e7bdf33f4e239fe611b4950e5"},
 ]
 
 [package.dependencies]
@@ -323,13 +323,13 @@ typing = ["mypy (>=0.990)"]
 
 [[package]]
 name = "cookiecutter"
-version = "2.3.0"
+version = "2.3.1"
 description = "A command-line utility that creates projects from project templates, e.g. creating a Python package project from a Python package project template."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "cookiecutter-2.3.0-py3-none-any.whl", hash = "sha256:7e87944757c6e9f8729cf89a4139b6a35ab4d6dcbc6ae3e7d6360d44ad3ad383"},
-    {file = "cookiecutter-2.3.0.tar.gz", hash = "sha256:942a794981747f6d7f439d6e49d39dc91a9a641283614160c93c474c72c29621"},
+    {file = "cookiecutter-2.3.1-py3-none-any.whl", hash = "sha256:a583118324edb95e01da3c8468209c2d5562e4553009866b1d891c50e72b2373"},
+    {file = "cookiecutter-2.3.1.tar.gz", hash = "sha256:42aa1d27368f58be600d13e56d5d2177684f8f69a40d9cbad84851ba44f842de"},
 ]
 
 [package.dependencies]
@@ -1533,13 +1533,13 @@ files = [
 
 [[package]]
 name = "traitlets"
-version = "5.10.0"
+version = "5.10.1"
 description = "Traitlets Python configuration system"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "traitlets-5.10.0-py3-none-any.whl", hash = "sha256:417745a96681fbb358e723d5346a547521f36e9bd0d50ba7ab368fff5d67aa54"},
-    {file = "traitlets-5.10.0.tar.gz", hash = "sha256:f584ea209240466e66e91f3c81aa7d004ba4cf794990b0c775938a1544217cd1"},
+    {file = "traitlets-5.10.1-py3-none-any.whl", hash = "sha256:07ab9c5bf8a0499fd7b088ba51be899c90ffc936ffc797d7b6907fc516bcd116"},
+    {file = "traitlets-5.10.1.tar.gz", hash = "sha256:db9c4aa58139c3ba850101913915c042bdba86f7c8a0dda1c6f7f92c5da8e542"},
 ]
 
 [package.extras]
@@ -1599,4 +1599,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "d0ebb4b5baeb568f31a71302cbc04bd4148c81dabb4d616e4f0276443ff6c952"
+content-hash = "b6103a8047a813d339a0e60fb314b50920893f0ceb6d618a072224474e53e807"
