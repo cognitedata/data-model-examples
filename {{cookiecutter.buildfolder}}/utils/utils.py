@@ -50,6 +50,8 @@ class CDFToolConfig:
         self._example = None
         self._failed = False
         self._environ = {}
+        if token is not None:
+            self._environ["CDF_TOKEN"] = token
         if config is not None:
             self._config = config
         else:
@@ -80,6 +82,8 @@ class CDFToolConfig:
             return
 
         # CDF_CLUSTER and CDF_PROJECT are minimum requirements to know where to connect.
+        # Above they were forced default to None and fail was False, here we
+        # will fail with an exception if they are not set.
         self._cluster = self.environ("CDF_CLUSTER")
         self._project = self.environ("CDF_PROJECT")
         # CDF_URL is optional, but if set, we use that instead of the default URL using cluster.
@@ -192,7 +196,8 @@ class CDFToolConfig:
             Value of the environment variable
             Raises ValueError if environment variable is not set and fail=True
         """
-        if attr not in self._environ:
+        # If the var is none, we want to reevaluate from environment.
+        if attr not in self._environ or self._environ[attr] is None:
             self._environ[attr] = os.environ.get(attr, None) or default
             if self._environ[attr] is None and fail:
                 raise ValueError(
