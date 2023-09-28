@@ -2,6 +2,20 @@
 
 **Please add new changelog items at the top!**
 
+## Sep XX, 2023 - Adapt the repo to continuous testing
+
+- Add installable package data_model_examples.utils
+- Add support for supplying OAuth2 token with instantiating CDFToolConfig
+
+## Sep 7, 2023
+
+- Fix inconsistency in default naming of imports
+- Fix bug in delete_datamodel() - not including ToolGlobals
+
+## Aug 30, 2023
+
+- Update timeseries datapoints to today
+
 ## Aug 24, 2023
 
 - Factor out all functions into the utils/ module to make them easy to load from other scripts.
