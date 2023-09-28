@@ -61,7 +61,7 @@ class CDFToolConfig:
                     self._config = json.load(file)
             except Exception as e:
                 logger.info(
-                    "Not loading configuration from inventory.json file, using 'default' as values."
+                    "Not loading configuration from inventory.json file, using 'default' as values for all attributes."
                 )
                 self._config = {
                     "default": {

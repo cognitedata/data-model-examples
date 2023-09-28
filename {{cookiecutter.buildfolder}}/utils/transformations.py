@@ -18,14 +18,14 @@ from .utils import CDFToolConfig
 from utils.transformations_config import parse_transformation_configs
 
 
-def run_transformations(ToolGlobals: CDFToolConfig):
+def run_transformations(ToolGlobals: CDFToolConfig, directory=None):
+    if directory is None:
+        directory = f"./examples/{ToolGlobals.example}/transformations"
     ToolGlobals.failed = False
     client = ToolGlobals.verify_client(
         capabilities={"transformationsAcl": ["READ", "WRITE"]}
     )
-    configs = parse_transformation_configs(
-        f"./examples/{ToolGlobals.example}/transformations/"
-    )
+    configs = parse_transformation_configs(f"{directory}")
     transformations_ext_ids = [t.external_id for t in configs.values()]
     try:
         for t in transformations_ext_ids:
