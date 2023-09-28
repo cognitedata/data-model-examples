@@ -45,6 +45,7 @@ class CDFToolConfig:
         self,
         client_name: str = "Generic Cognite examples library",
         config: dict | None = None,
+        token: str = None,
     ) -> None:
         self._data_set_id: int = 0
         self._example = None
@@ -91,13 +92,16 @@ class CDFToolConfig:
             "CDF_URL", f"https://{self._cluster}.cognitedata.com"
         )
         # If CDF_TOKEN is set, we want to use that token instead of client credentials.
-        if self.environ("CDF_TOKEN", default=None, fail=False) is not None:
+        if (
+            self.environ("CDF_TOKEN", default=None, fail=False) is not None
+            or token is not None
+        ):
             self._client = CogniteClient(
                 ClientConfig(
                     client_name=client_name,
                     base_url=self._cdf_url,
                     project=self._project,
-                    credentials=Token(self.environ("CDF_TOKEN")),
+                    credentials=Token(token or self.environ("CDF_TOKEN")),
                 )
             )
         else:
@@ -196,19 +200,16 @@ class CDFToolConfig:
             Value of the environment variable
             Raises ValueError if environment variable is not set and fail=True
         """
-        # If the var is none, we want to reevaluate from environment.
-        if attr not in self._environ or self._environ[attr] is None:
-            self._environ[attr] = os.environ.get(attr, None) or default
-            if self._environ[attr] is None and fail:
+        if attr in self._environ and self._environ[attr] is not None:
+            return self._environ[attr]
+        # If the var was none, we want to re-evaluate from environment.
+        self._environ[attr] = os.environ.get(attr, None)
+        if self._environ[attr] is None:
+            if default is None and fail:
                 raise ValueError(
                     f"{attr} property is not available as an environment variable and no default set."
                 )
-            else:
-                if (
-                    self._environ[attr] is not None
-                    and len(self._environ[attr].split(" ")) > 1
-                ):
-                    self._environ[attr] = self._environ[attr].split(" ")
+            self._environ[attr] = default
         return self._environ[attr]
 
     @property

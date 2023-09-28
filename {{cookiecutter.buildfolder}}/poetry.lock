@@ -262,13 +262,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cognite-sdk"
-version = "6.27.0"
+version = "6.28.0"
 description = "Cognite Python SDK"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "cognite_sdk-6.27.0-py3-none-any.whl", hash = "sha256:a5700b450605a324a81571d418ae478334ff2e9f9b80b3f3759fda3fb521707f"},
-    {file = "cognite_sdk-6.27.0.tar.gz", hash = "sha256:1ff69ec727dad62343200c75125f8d22d03fc57e7bdf33f4e239fe611b4950e5"},
+    {file = "cognite_sdk-6.28.0-py3-none-any.whl", hash = "sha256:b2ef30e8e093c479f6d38261785a3ea1254830b35d340a86b490c95430c2943a"},
+    {file = "cognite_sdk-6.28.0.tar.gz", hash = "sha256:3e221f6075b1176a6f1bd9fd8eae375229872aa5dcff57845ae57450ece190bc"},
 ]
 
 [package.dependencies]
@@ -594,13 +594,13 @@ test = ["coverage", "ipykernel (>=6.14)", "mypy", "paramiko", "pre-commit", "pyt
 
 [[package]]
 name = "jupyter-core"
-version = "5.3.1"
+version = "5.3.2"
 description = "Jupyter core package. A base package on which Jupyter projects rely."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "jupyter_core-5.3.1-py3-none-any.whl", hash = "sha256:ae9036db959a71ec1cac33081eeb040a79e681f08ab68b0883e9a676c7a90dce"},
-    {file = "jupyter_core-5.3.1.tar.gz", hash = "sha256:5ba5c7938a7f97a6b0481463f7ff0dbac7c15ba48cf46fa4035ca6e838aa1aba"},
+    {file = "jupyter_core-5.3.2-py3-none-any.whl", hash = "sha256:a4af53c3fa3f6330cebb0d9f658e148725d15652811d1c32dc0f63bb96f2e6d6"},
+    {file = "jupyter_core-5.3.2.tar.gz", hash = "sha256:0c28db6cbe2c37b5b398e1a1a5b22f84fd64cd10afc1f6c05b02fb09481ba45f"},
 ]
 
 [package.dependencies]
@@ -1599,4 +1599,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "b6103a8047a813d339a0e60fb314b50920893f0ceb6d618a072224474e53e807"
+content-hash = "0eb7f22f179220aafe2a33648f5fdd350a5d38c93ea8eade1308d18b807d1cac"
