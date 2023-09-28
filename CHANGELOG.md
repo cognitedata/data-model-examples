@@ -2,10 +2,19 @@
 
 **Please add new changelog items at the top!**
 
-## Sep XX, 2023 - Adapt the repo to continuous testing
+## Sep 28, 2023 - Adapt the repo to continuous testing
 
-- Add installable package data_model_examples.utils
-- Add support for supplying OAuth2 token with instantiating CDFToolConfig
+- Support use of env var CDF_TOKEN to supply OAuth2 token and thus not require
+  OAuth2 client config. The token can also be supplied when instantiating CDFToolConfig.
+- Add installable package data_model_examples.utils for dev and test purposed (not public).
+- Add support for supplying OAuth2 token with instantiating CDFToolConfig.
+- Add optional directory parameter to load and delete functions for direct
+    loading and deletion of data from a directory.
+- Upgrade to Cognite Python SDK 6.28.0
+- Add new .environ(attr) method to CDFToolConfig to allow for loading of
+    environment variables.
+- Add new load_readwrite_group() function to load.py to support loading of
+  groups with a set of capabilities (should not be used to manipulate admin group).
 
 ## Sep 7, 2023
 

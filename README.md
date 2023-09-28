@@ -104,6 +104,15 @@ CDFToolConfig() also gives you .environ(attr, default, fail) which allows you to
 set a default, and optionally NOT fail if the variable is not found in the enviroment.
 You can easily see what is configured from the environment using `print(CDFToolConfig())`.
 
+If you have a generated OAuth2 Bearer token, you can set the environment variable CDF_TOKEN to the token
+or you can supply the token when instantiating CDFToolConfig():
+
+```python
+import utils
+ToolGlobals = CDFToolConfig(client_name="name_of_your_app", token="your_token")
+ToolGlobals.client.raw.tables.list("raw_db_name")
+```
+
 [CONTRIBUTING.md](./CONTRIBUTING.md) explains more about how the data sets are set up.
 
 And finally, if you just want to get inspired and copy some code to configure your own CDF SDK client, `utils/utils.py`
