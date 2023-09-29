@@ -96,7 +96,10 @@ def delete_timeseries(
         with open(f"{directory}/{f}", "rt") as file:
             ts = json.load(file)
             for t in ts:
-                timeseries.append(TimeSeries._load(t))
+                ts = TimeSeries()
+                for k, v in t.items():
+                    ts.__setattr__(k, v)
+                timeseries.append(ts)
     if len(timeseries) == 0:
         return
     drop_ts: list[str] = []
