@@ -13,8 +13,8 @@
             "args": [
                 "movie_actors",
                 "--drop",
-                //"--load",
-                //"datamodel"
+                "--load",
+                "transformationsdump"
                 //"raw,timeseries,files,transformations,datamodel"
             ],
             "console": "integratedTerminal",
@@ -69,6 +69,19 @@
             "args": [
                 "tutorial_apm_simple",
                 "tutorial_apm_simple",
+                "tmp"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: dump_transformations.py",
+            "type": "python",
+            "request": "launch",
+            "program": "dump_transformations.py",
+            "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
+            "args": [
+                "all",
                 "tmp"
             ],
             "console": "integratedTerminal",

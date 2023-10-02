@@ -31,7 +31,11 @@ from .datamodel import (
     dump_datamodel,
 )
 
-from .transformations import run_transformations
+from .transformations import (
+    run_transformations,
+    dump_transformations,
+    load_transformations_dump,
+)
 
 import sys
 import os
