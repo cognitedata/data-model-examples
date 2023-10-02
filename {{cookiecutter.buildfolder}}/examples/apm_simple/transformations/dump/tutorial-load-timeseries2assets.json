@@ -17,15 +17,5 @@
   "ignore_null_fields": true,
   "has_source_oidc_credentials": false,
   "has_destination_oidc_credentials": false,
-  "owner_is_current_user": true,
-  "source_session": {
-    "session_id": 522681584065719,
-    "client_id": null,
-    "project_name": "trial-984ca9977a77d69e4360e"
-  },
-  "destination_session": {
-    "session_id": 522681584065719,
-    "client_id": null,
-    "project_name": "trial-984ca9977a77d69e4360e"
-  }
+  "owner_is_current_user": true
 }
