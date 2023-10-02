@@ -4,13 +4,13 @@
   "destination": {
     "type": "instances",
     "data_model": {
-      "space": "tutorial_apm_simple",
-      "external_id": "tutorial_apm_simple",
+      "space": "{{cookiecutter.apm_simple_space}}",
+      "external_id": "{{cookiecutter.apm_simple_datamodel}}",
       "version": "1",
       "destination_type": "WorkOrder",
       "destination_relationship_from_type": "workItems"
     },
-    "instance_space": "tutorial_apm_simple"
+    "external_id": "{{cookiecutter.apm_simple_space}}"
   },
   "conflict_mode": "upsert",
   "is_public": true,
