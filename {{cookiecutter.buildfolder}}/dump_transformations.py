@@ -19,17 +19,20 @@ import os
 
 from utils import ToolGlobals
 
-from utils import *
+from utils import dump_transformations
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: ./dump_datamodel.py <space> <data_model> <directory>")
+    if len(sys.argv) != 3:
+        print("Usage: ./dump_transformations.py t1,t2,t3... <directory>")
         exit(1)
-    if not os.path.exists(sys.argv[3]):
-        os.makedirs(sys.argv[3])
-    dump_datamodel(
+    if not os.path.exists(sys.argv[2]):
+        os.makedirs(sys.argv[2])
+    if sys.argv[1] == "all":
+        ts = None
+    else:
+        ts = sys.argv[1].split(",")
+    dump_transformations(
         ToolGlobals,
-        space_name=sys.argv[1],
-        model_name=sys.argv[2],
-        target_dir=sys.argv[3],
+        external_ids=ts,
+        target_dir=sys.argv[2],
     )

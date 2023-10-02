@@ -2,6 +2,33 @@
 
 **Please add new changelog items at the top!**
 
+## Oct 2, 2023 - Adapt the repo to continuous testing
+
+- Support use of env var CDF_TOKEN to supply OAuth2 token and thus not require
+  OAuth2 client config. The token can also be supplied when instantiating CDFToolConfig.
+- Add installable package data_model_examples.utils for dev and test purposed (not public).
+- Add support for supplying OAuth2 token when instantiating CDFToolConfig.
+- Add optional directory parameter to load and delete functions for direct
+    loading and deletion of data from a directory.
+- Upgrade to Cognite Python SDK 6.28.0
+- Add new .environ(attr) method to CDFToolConfig to allow for easy loading of
+    environment variables.
+- Add new load_readwrite_group() function to load.py to support loading of
+  groups with a set of capabilities (should not be used to manipulate admin group due to
+  risk of loosing access).
+- Add support for dumping and loading of transformations to/from JSON and SQL files without
+  auth configuration (new dump_transformations.py scropt and dump_transformations() and
+  load_transformations_dump() functions in utils).
+
+## Sep 7, 2023
+
+- Fix inconsistency in default naming of imports
+- Fix bug in delete_datamodel() - not including ToolGlobals
+
+## Aug 30, 2023
+
+- Update timeseries datapoints to today
+
 ## Aug 24, 2023
 
 - Factor out all functions into the utils/ module to make them easy to load from other scripts.

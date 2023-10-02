@@ -14,8 +14,10 @@ from .delete import delete_datamodel
 from .utils import CDFToolConfig
 
 
-def load_datamodel(ToolGlobals: CDFToolConfig, drop: bool) -> None:
-    with open(f"./examples/{ToolGlobals.example}/datamodel.graphql", "rt") as file:
+def load_datamodel(ToolGlobals: CDFToolConfig, drop: bool, directory=None) -> None:
+    if directory is None:
+        directory = f"./examples/{ToolGlobals.example}"
+    with open(f"{directory}/datamodel.graphql", "rt") as file:
         # Read directly into a string.
         datamodel = file.read()
     if drop:
@@ -61,10 +63,10 @@ def load_datamodel(ToolGlobals: CDFToolConfig, drop: bool) -> None:
     print(f"Created data model {model_name}.")
 
 
-def load_datamodel_dump(ToolGlobals: CDFToolConfig, drop: bool) -> None:
-    with open(
-        f"./examples/{ToolGlobals.example}/data_model/datamodel.json", "rt"
-    ) as file:
+def load_datamodel_dump(ToolGlobals: CDFToolConfig, drop: bool, directory=None) -> None:
+    if directory is None:
+        directory = f"./examples/{ToolGlobals.example}/data_model"
+    with open(f"{directory}/datamodel.json", "rt") as file:
         # Read directly into DataModel and convert to apply (write) version of datamodel.
         # The json is a direct dump from API /models/datamodels/byids.
         datamodel = DataModel.load(json.load(file)).as_apply()
@@ -72,7 +74,7 @@ def load_datamodel_dump(ToolGlobals: CDFToolConfig, drop: bool) -> None:
     containers = {}
     for v in datamodel.views:
         with open(
-            f"./examples/{ToolGlobals.example}/data_model/{v.external_id}.view.json",
+            f"{directory}/{v.external_id}.view.json",
             "rt",
         ) as file:
             # Load view and convert to apply (write) version of view as we are reading
@@ -80,7 +82,7 @@ def load_datamodel_dump(ToolGlobals: CDFToolConfig, drop: bool) -> None:
             # The dump is from API /models/views/byids.
             views[v.external_id] = View.load(json.load(file)).as_apply()
         with open(
-            f"./examples/{ToolGlobals.example}/data_model/{v.external_id}.container.json",
+            f"{directory}/{v.external_id}.container.json",
             "rt",
         ) as file:
             # Load container and convert to apply (write) version of view as we are reading
@@ -280,7 +282,7 @@ def describe_datamodel(ToolGlobals: CDFToolConfig, space_name, model_name) -> No
 def dump_datamodel(
     ToolGlobals: CDFToolConfig, space_name, model_name, target_dir
 ) -> None:
-    """Describe data model from CDF"""
+    """Dump data model from CDF"""
 
     print("Verifying access rights...")
     client = ToolGlobals.verify_client(

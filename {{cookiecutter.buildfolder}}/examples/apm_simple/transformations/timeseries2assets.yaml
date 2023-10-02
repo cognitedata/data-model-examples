@@ -1,5 +1,5 @@
 # Manifest file downloaded from fusion
-externalId: tr-tutorial-load-timeseries2assets
+externalId: tutorial-load-timeseries2assets
 name: tutorial-load-timeseries2assets
 query: >-
   /* MAPPING_MODE_ENABLED: false */

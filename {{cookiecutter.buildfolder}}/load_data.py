@@ -23,7 +23,7 @@ from utils import *
 @click.option(
     "--load",
     default="raw,timeseries,files,transformations,datamodel",
-    help="Specify which data you want to load. Default raw,timeseries,files,transformations,datamodel, datamodeldump.",
+    help="Specify which data you want to load. Options: raw,timeseries,files,transformations,transformationsdump,datamodel,datamodeldump.",
 )
 @click.option(
     "--drop", is_flag=True, default=False, help="Whether to delete existing data."
@@ -39,12 +39,14 @@ def cli(file: str, load: str, drop: bool, example_folder: str):
         load_files(ToolGlobals, file, drop)
     if "timeseries" in load:
         load_timeseries(ToolGlobals, file, drop)
-    if "transformations" in load:
+    if "transformationsdump" in load:
+        load_transformations_dump(ToolGlobals, file, drop)
+    elif "transformations" in load:
         load_transformations(ToolGlobals, file, drop)
-    if "datamodel" in load:
-        load_datamodel(ToolGlobals, drop)
     if "datamodeldump" in load:
         load_datamodel_dump(ToolGlobals, drop)
+    elif "datamodel" in load:
+        load_datamodel(ToolGlobals, drop)
     if ToolGlobals.failed:
         print(f"Failure to load as expected.")
         exit(1)

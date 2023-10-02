@@ -1,0 +1,31 @@
+{
+  "external_id": "tutorial-movie-actor-appearances",
+  "name": "tutorial-Movie-actor-appearances",
+  "destination": {
+    "type": "instances",
+    "data_model": {
+      "space": "tutorial_movies",
+      "external_id": "tutorial_MovieDM",
+      "version": "1",
+      "destination_type": "Movie",
+      "destination_relationship_from_type": "actors"
+    },
+    "instance_space": "tutorial_movies"
+  },
+  "conflict_mode": "upsert",
+  "is_public": true,
+  "ignore_null_fields": true,
+  "has_source_oidc_credentials": false,
+  "has_destination_oidc_credentials": false,
+  "owner_is_current_user": true,
+  "source_session": {
+    "session_id": 561760054488563,
+    "client_id": null,
+    "project_name": "trial-984ca9977a77d69e4360e"
+  },
+  "destination_session": {
+    "session_id": 561760054488563,
+    "client_id": null,
+    "project_name": "trial-984ca9977a77d69e4360e"
+  }
+}

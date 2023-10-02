@@ -15,10 +15,11 @@
 import json
 import os
 import logging
+from typing import List
 from cognite.client.exceptions import CogniteAuthError
 from cognite.client.data_classes.data_sets import DataSet
 from cognite.client import CogniteClient, ClientConfig
-from cognite.client.credentials import OAuthClientCredentials
+from cognite.client.credentials import OAuthClientCredentials, Token
 
 logger = logging.getLogger(__name__)
 
@@ -44,10 +45,14 @@ class CDFToolConfig:
         self,
         client_name: str = "Generic Cognite examples library",
         config: dict | None = None,
+        token: str = None,
     ) -> None:
         self._data_set_id: int = 0
         self._example = None
         self._failed = False
+        self._environ = {}
+        if token is not None:
+            self._environ["CDF_TOKEN"] = token
         if config is not None:
             self._config = config
         else:
@@ -55,29 +60,84 @@ class CDFToolConfig:
                 with open(f"./inventory.json", "rt") as file:
                     self._config = json.load(file)
             except Exception as e:
-                logger.error(
-                    "Not able to load example inventory from inventory.json file."
+                logger.info(
+                    "Not loading configuration from inventory.json file, using 'default' as values for all attributes."
                 )
-                logger.error(e)
-                exit(1)
-        if "CDF_URL" not in os.environ:
+                self._config = {
+                    "default": {
+                        "raw_db": "default",
+                        "data_set": "default",
+                        "data_set_desc": "-",
+                        "model_space": "default",
+                        "data_model": "default",
+                    }
+                }
+                self._example = "default"
+        if (
+            self.environ("CDF_URL", default=None, fail=False) is None
+            and self.environ("CDF_CLUSTER", default=None, fail=False) is None
+        ):
+            # If CDF_URL and CDF_CLUSTER are not set, we may be in a Jupyter notebook in Fusion,
+            # and credentials are preset to logged in user (no env vars are set!).
             self._client = CogniteClient()
-        else:
+            return
+
+        # CDF_CLUSTER and CDF_PROJECT are minimum requirements to know where to connect.
+        # Above they were forced default to None and fail was False, here we
+        # will fail with an exception if they are not set.
+        self._cluster = self.environ("CDF_CLUSTER")
+        self._project = self.environ("CDF_PROJECT")
+        # CDF_URL is optional, but if set, we use that instead of the default URL using cluster.
+        self._cdf_url = self.environ(
+            "CDF_URL", f"https://{self._cluster}.cognitedata.com"
+        )
+        # If CDF_TOKEN is set, we want to use that token instead of client credentials.
+        if (
+            self.environ("CDF_TOKEN", default=None, fail=False) is not None
+            or token is not None
+        ):
             self._client = CogniteClient(
                 ClientConfig(
                     client_name=client_name,
-                    base_url=os.environ["CDF_URL"],
-                    project=os.environ["CDF_PROJECT"],
+                    base_url=self._cdf_url,
+                    project=self._project,
+                    credentials=Token(token or self.environ("CDF_TOKEN")),
+                )
+            )
+        else:
+            # We are now doing OAuth2 client credentials flow, so we need to set the
+            # required variables.
+            # We can infer scopes and audience from the cluster value.
+            # However, the URL to use to retrieve the token, as well as
+            # the client id and secret, must be set as environment variables.
+            self._scopes = self.environ(
+                "IDP_SCOPES",
+                [f"https://{self._cluster}.cognitedata.com/.default"],
+            )
+            self._audience = self.environ(
+                "IDP_AUDIENCE", f"https://{self._cluster}.cognitedata.com"
+            )
+            self._client = CogniteClient(
+                ClientConfig(
+                    client_name=client_name,
+                    base_url=self._cdf_url,
+                    project=self._project,
                     credentials=OAuthClientCredentials(
-                        token_url=os.environ["IDP_TOKEN_URL"],
-                        client_id=os.environ["IDP_CLIENT_ID"],
+                        token_url=self.environ("IDP_TOKEN_URL"),
+                        client_id=self.environ("IDP_CLIENT_ID"),
                         # client secret should not be stored in-code, so we load it from an environment variable
-                        client_secret=os.environ["IDP_CLIENT_SECRET"],
-                        scopes=[os.environ["IDP_SCOPES"]],
-                        audience=os.environ["IDP_AUDIENCE"],
+                        client_secret=self.environ("IDP_CLIENT_SECRET"),
+                        scopes=self._scopes,
+                        audience=self._audience,
                     ),
                 )
             )
+
+    def __str__(self):
+        return (
+            f"Cluster {self._cluster} with project {self._project} and config:\n"
+            + json.dumps(self._environ, indent=2, sort_keys=True)
+        )
 
     @property
     # Flag set if something that should have worked failed if a data set is
@@ -103,9 +163,54 @@ class CDFToolConfig:
         self._data_set_id = 0
 
     def config(self, attr: str) -> str:
+        """Helper function to get configuration for an example (from inventory.json).
+
+        This function uses the example property in this class as a key to get the configuration,
+        so example must be set before calling the function.
+
+        Args:
+            attr: name of configuration variable
+
+        Yields:
+            Value of the configuration variable for example
+            Raises ValueError if configuration variable is not set
+        """
         if attr not in self._config.get(self._example, {}):
-            raise ValueError(f"{attr} property must be set in CDFToolConfig().")
+            raise ValueError(
+                f"{attr} property must be set in CDFToolConfig()/inventory.json."
+            )
         return self._config.get(self._example, {}).get(attr, "")
+
+    def environ(
+        self, attr: str, default: str | List[str] = None, fail: bool = True
+    ) -> str:
+        """Helper function to load variables from the environment.
+
+        Use python-dotenv to load environment variables from an .env file before
+        using this function.
+
+        If the environment variable has spaces, it will be split into a list of strings.
+
+        Args:
+            attr: name of environment variable
+            default: default value if environment variable is not set
+            fail: if True, raise ValueError if environment variable is not set
+
+        Yields:
+            Value of the environment variable
+            Raises ValueError if environment variable is not set and fail=True
+        """
+        if attr in self._environ and self._environ[attr] is not None:
+            return self._environ[attr]
+        # If the var was none, we want to re-evaluate from environment.
+        self._environ[attr] = os.environ.get(attr, None)
+        if self._environ[attr] is None:
+            if default is None and fail:
+                raise ValueError(
+                    f"{attr} property is not available as an environment variable and no default set."
+                )
+            self._environ[attr] = default
+        return self._environ[attr]
 
     @property
     def example(self) -> str:
@@ -193,7 +298,7 @@ class CDFToolConfig:
         """
 
         def get_dataset_name() -> str:
-            """Helper function to get the dataset name from the inventory.py file"""
+            """Helper function to get the dataset name from the inventory.json file"""
             return (
                 data_set_name
                 if data_set_name is not None and len(data_set_name) > 0
