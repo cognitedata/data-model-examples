@@ -29,6 +29,7 @@ from .datamodel import (
     load_datamodel_dump,
     describe_datamodel,
     dump_datamodel,
+    dump_datamodels_all,
 )
 
 from .transformations import (

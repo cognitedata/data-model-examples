@@ -1,11 +1,15 @@
 import datetime
 import json
+import os
 from cognite.client.data_classes.data_modeling import (
     ViewId,
     DirectRelationReference,
     DirectRelation,
 )
-from cognite.client.data_classes.data_modeling.data_models import DataModel
+from cognite.client.data_classes.data_modeling.data_models import (
+    DataModel,
+    DataModelList,
+)
 from cognite.client.data_classes.data_modeling.views import View
 from cognite.client.data_classes.data_modeling.spaces import SpaceApply
 from cognite.client.data_classes.data_modeling.containers import Container
@@ -279,8 +283,48 @@ def describe_datamodel(ToolGlobals: CDFToolConfig, space_name, model_name) -> No
         print(f"  {node_count} nodes of view {v.external_id}.")
 
 
+def dump_datamodels_all(
+    ToolGlobals: CDFToolConfig,
+    target_dir: str = "tmp",
+    model_name: str = None,
+    include_global: bool = False,
+):
+    print("Verifying access rights...")
+    client = ToolGlobals.verify_client(
+        capabilities={
+            "dataModelsAcl": ["READ", "WRITE"],
+            "dataModelInstancesAcl": ["READ", "WRITE"],
+        }
+    )
+    try:
+        print("  data model...")
+        data_models: DataModelList = client.data_modeling.data_models.list(
+            limit=-1, include_global=include_global
+        )
+    except Exception as e:
+        print(f"Failed to retrieve data models.")
+        print(e)
+        return
+    for d in data_models.data:
+        if model_name is not None and d.external_id != model_name:
+            continue
+        if not os.path.exists(f"{target_dir}/{d.external_id}"):
+            os.makedirs(f"{target_dir}/{d.external_id}")
+        dump_datamodel(
+            ToolGlobals,
+            d.space,
+            d.external_id,
+            d.version,
+            f"{target_dir}/{d.external_id}",
+        )
+
+
 def dump_datamodel(
-    ToolGlobals: CDFToolConfig, space_name, model_name, target_dir
+    ToolGlobals: CDFToolConfig,
+    space_name,
+    model_name,
+    version: str = "1",
+    target_dir: str = "tmp",
 ) -> None:
     """Dump data model from CDF"""
 
@@ -291,7 +335,7 @@ def dump_datamodel(
             "dataModelInstancesAcl": ["READ", "WRITE"],
         }
     )
-    print("Loading data model ({model_name}) in space ({space_name})...")
+    print(f"Loading data model ({model_name}) in space ({space_name})...")
     try:
         print("  space...")
         space = client.data_modeling.spaces.retrieve(space_name)
@@ -300,7 +344,9 @@ def dump_datamodel(
         print(e)
     try:
         print("  containers...")
-        containers = client.data_modeling.containers.list(space=space_name, limit=None)
+        containers = client.data_modeling.containers.list(
+            space=space_name, limit=None, include_global=True
+        )
     except Exception as e:
         print(f"Failed to retrieve containers for data model {model_name}.")
         print(e)
@@ -309,7 +355,7 @@ def dump_datamodel(
     try:
         print("  data model...")
         data_model = client.data_modeling.data_models.retrieve(
-            (space_name, model_name, "1"), inline_views=False
+            (space_name, model_name, version), inline_views=False
         )
         data_model = data_model.data[0].dump()
     except Exception as e:
@@ -322,7 +368,7 @@ def dump_datamodel(
     try:
         print("  views...")
         views = client.data_modeling.data_models.retrieve(
-            (space_name, model_name, "1"), inline_views=True
+            (space_name, model_name, version), inline_views=True
         )
     except Exception as e:
         print(
@@ -333,7 +379,7 @@ def dump_datamodel(
     views = views.data[0].views
     print("Writing...")
     with open(
-        f"{target_dir}/datamodel.json",
+        f"{target_dir}/data_model.json",
         "wt",
     ) as file:
         json.dump(data_model, file, indent=4)
