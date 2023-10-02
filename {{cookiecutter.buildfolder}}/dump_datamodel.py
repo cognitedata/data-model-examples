@@ -16,15 +16,8 @@
 
 import sys
 import os
-import json
-import datetime
-from cognite.client.data_classes.data_modeling import (
-    ViewId,
-    DirectRelationReference,
-    DirectRelation,
-)
+
 from utils import ToolGlobals
-import pandas as pd
 
 from utils import *
 

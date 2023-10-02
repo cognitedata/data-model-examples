@@ -282,7 +282,7 @@ def describe_datamodel(ToolGlobals: CDFToolConfig, space_name, model_name) -> No
 def dump_datamodel(
     ToolGlobals: CDFToolConfig, space_name, model_name, target_dir
 ) -> None:
-    """Describe data model from CDF"""
+    """Dump data model from CDF"""
 
     print("Verifying access rights...")
     client = ToolGlobals.verify_client(
