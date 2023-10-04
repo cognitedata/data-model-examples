@@ -11,10 +11,10 @@
             "program": "load_data.py",
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
-                "movie_actors",
+                "apm_simple",
                 "--drop",
                 "--load",
-                "transformationsdump"
+                "datamodeldump"
                 //"raw,timeseries,files,transformations,datamodel"
             ],
             "console": "integratedTerminal",
@@ -27,10 +27,11 @@
             "program": "delete_data.py",
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
-                "apm_simple",
+                "all",
                 //"--dry-run",
+                "--instances",
                 "--delete",
-                "datamodel" //"raw,timeseries,transformations,files,datamodel"
+                "datamodelall" //"raw,timeseries,transformations,files,datamodel"
             ],
             "console": "integratedTerminal",
             "justMyCode": false
@@ -67,8 +68,8 @@
             "program": "dump_datamodel.py",
             "cwd": "${workspaceFolder}/{{cookiecutter.buildfolder}}",
             "args": [
-                "tutorial_apm_simple",
-                "tutorial_apm_simple",
+                "global",
+                "all",
                 "tmp"
             ],
             "console": "integratedTerminal",

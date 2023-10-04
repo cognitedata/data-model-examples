@@ -67,35 +67,178 @@ def load_datamodel(ToolGlobals: CDFToolConfig, drop: bool, directory=None) -> No
     print(f"Created data model {model_name}.")
 
 
-def load_datamodel_dump(ToolGlobals: CDFToolConfig, drop: bool, directory=None) -> None:
+def clean_out_datamodels(
+    ToolGlobals: CDFToolConfig, dry_run=False, directory=None, instances=False
+) -> None:
+    """WARNING!!!!
+
+    Destructive: will delete all containers, views, data models, and spaces either
+    found in local directory or GLOBALLY!!! (if not supplied)
+    """
+    if directory is not None:
+        load_datamodel_dump(
+            ToolGlobals, drop=True, directory=directory, dry_run=dry_run, only_drop=True
+        )
+        return
+    print("WARNING: This will delete all data models, views, containers, and spaces.")
+    ToolGlobals.failed = False
+    client = ToolGlobals.verify_client(
+        capabilities={
+            "dataModelsAcl": ["READ", "WRITE"],
+            "dataModelInstancesAcl": ["READ", "WRITE"],
+        }
+    )
+    try:
+        spaces = client.data_modeling.spaces.list(limit=-1)
+        containers = client.data_modeling.containers.list(limit=-1)
+        views = client.data_modeling.views.list(limit=-1, all_versions=True)
+        data_models = client.data_modeling.data_models.list(limit=-1, all_versions=True)
+    except Exception as e:
+        print(f"Failed to retrieve everything needed.")
+        print(e)
+        ToolGlobals.failed = True
+        return
+    print(f"Found:")
+    print(f"  {len(spaces)} spaces")
+    print(f"  {len(containers)} containers")
+    print(f"  {len(views)} views")
+    print(f"  {len(data_models)} data models")
+    if dry_run:
+        return
+    print("Deleting...")
+    try:
+        client.data_modeling.containers.delete(
+            [(c.space, c.external_id) for c in containers.data]
+        )
+        print(f"  Deleted {len(containers)} containers.")
+    except Exception as e:
+        print("  Was not able to delete containers. May not exist.")
+        print(e)
+    try:
+        client.data_modeling.views.delete(
+            [(v.space, v.external_id, v.version) for v in views.data]
+        )
+        print(f"  Deleted {len(views)} views.")
+    except Exception as e:
+        print("  Was not able to delete views. May not exist.")
+        print(e)
+    try:
+        client.data_modeling.data_models.delete(
+            [(d.space, d.external_id, d.version) for d in data_models.data]
+        )
+        print(f"  Deleted {len(data_models)} data models.")
+    except Exception as e:
+        print("  Was not able to delete data models. May not exist.")
+        print(e)
+    i = 0
+    for s in spaces.data:
+        if instances:
+            print("Found --instances flag and will delete remaining nodes and edges.")
+            # Find any remaining nodes in the space
+            node_count = 0
+            node_delete = 0
+            for instance_list in client.data_modeling.instances(
+                instance_type="node",
+                include_typing=False,
+                filter={"equals": {"property": ["node", "space"], "value": s.space}},
+                chunk_size=1000,
+            ):
+                instances = [(s.space, i.external_id) for i in instance_list.data]
+                if not dry_run:
+                    ret = client.data_modeling.instances.delete(instances)
+                    node_delete += len(ret.nodes)
+                node_count += len(instance_list)
+            print(
+                f"Found {node_count} instances and deleted {node_delete} instances from {s.space}."
+            )
+        else:
+            print(
+                "Did not find --instances flag and will try to delete space without deleting remaining nodes and edges."
+            )
+        try:
+            client.data_modeling.spaces.delete(s.space)
+            i += 1
+        except Exception as e:
+            print(f"  Was not able to delete space {s.space}.")
+            print(e)
+    print(f"  Deleted {i} spaces.")
+
+
+def load_datamodel_dump(
+    ToolGlobals: CDFToolConfig,
+    drop: bool,
+    directory=None,
+    dry_run=False,
+    only_drop=False,
+) -> None:
     if directory is None:
         directory = f"./examples/{ToolGlobals.example}/data_model"
-    with open(f"{directory}/datamodel.json", "rt") as file:
-        # Read directly into DataModel and convert to apply (write) version of datamodel.
-        # The json is a direct dump from API /models/datamodels/byids.
-        datamodel = DataModel.load(json.load(file)).as_apply()
-    views = {}
-    containers = {}
-    for v in datamodel.views:
-        with open(
-            f"{directory}/{v.external_id}.view.json",
-            "rt",
-        ) as file:
-            # Load view and convert to apply (write) version of view as we are reading
-            # in a dump from a file.
-            # The dump is from API /models/views/byids.
-            views[v.external_id] = View.load(json.load(file)).as_apply()
-        with open(
-            f"{directory}/{v.external_id}.container.json",
-            "rt",
-        ) as file:
+    model_files = []
+    # Pick up all the datamodels.
+    for dirpath, _, filenames in os.walk(directory):
+        for f in filenames:
+            if "model.json" in f:
+                model_files.append(f"{dirpath}/{f}")
+    print(f"Found {len(model_files)} data models in {directory}.")
+    view_files = []
+    # Pick up all the views.
+    for dirpath, _, filenames in os.walk(directory):
+        for f in filenames:
+            if "view.json" in f:
+                view_files.append(f"{dirpath}/{f}")
+    print(f"Found {len(view_files)} views in {directory}.")
+    container_files = []
+    # Pick up all the containers.
+    for dirpath, _, filenames in os.walk(directory):
+        for f in filenames:
+            if "container.json" in f:
+                container_files.append(f"{dirpath}/{f}")
+    print(f"Found {len(container_files)} containers in {directory}.")
+    containers = []
+    for f in container_files:
+        with open(f"{f}", "rt") as file:
             # Load container and convert to apply (write) version of view as we are reading
             # in a dump from a file.
             # The dump is from API /models/containers
-            containers[v.external_id] = Container.load(json.load(file)).as_apply()
-
-    if drop:
-        delete_datamodel(ToolGlobals, instances_only=False)
+            containers.append(Container.load(json.load(file)).as_apply())
+    views = []
+    for f in view_files:
+        with open(f"{f}", "rt") as file:
+            # Load view and convert to apply (write) version of view as we are reading
+            # in a dump from a file.
+            # The dump is from API /models/views/byids.
+            views.append(View.load(json.load(file)).as_apply())
+    datamodels = []
+    for f in model_files:
+        with open(f"{f}", "rt") as file:
+            # Load view and convert to apply (write) version of view as we are reading
+            # in a dump from a file.
+            # The dump is from API /models/views/byids.
+            datamodels.append(DataModel.load(json.load(file)).as_apply())
+    print("Loaded from files: ")
+    print(f"  {len(containers)} containers")
+    print(f"  {len(views)} views")
+    print(f"  {len(datamodels)} data models")
+    space_list = []
+    container_list = []
+    view_list = []
+    model_list = []
+    for v in datamodels:
+        if v.space not in space_list:
+            space_list.append(v.space)
+        if (v.space, v.external_id) not in model_list:
+            model_list.append((v.space, v.external_id))
+    for v in views:
+        if v.space not in space_list:
+            space_list.append(v.space)
+        if (v.space, v.external_id) not in view_list:
+            view_list.append((v.space, v.external_id))
+    for c in containers:
+        if c.space not in space_list:
+            space_list.append(c.space)
+        if (v.space, v.external_id) not in container_list:
+            container_list.append((v.space, v.external_id))
+    print(f"Found {len(space_list)} spaces")
     # Clear any delete errors
     ToolGlobals.failed = False
     client = ToolGlobals.verify_client(
@@ -104,48 +247,70 @@ def load_datamodel_dump(ToolGlobals: CDFToolConfig, drop: bool, directory=None) 
             "dataModelInstancesAcl": ["READ", "WRITE"],
         }
     )
-    space_name = ToolGlobals.config("model_space")
-    model_name = ToolGlobals.config("data_model")
+    if dry_run:
+        return
+    if drop:
+        print("Deleting...")
+        try:
+            client.data_modeling.containers.delete([c for c in containers])
+            print(f"  Deleted {len(containers)} containers.")
+        except:
+            print("  Was not able to delete containers. May not exist.")
+        try:
+            client.data_modeling.views.delete([v for v in views])
+            print(f"  Deleted {len(views)} views.")
+        except:
+            print("  Was not able to delete views. May not exist.")
+        try:
+            client.data_modeling.data_models.delete([d for d in datamodels])
+            print(f"  Deleted {len(datamodels)} data models.")
+        except:
+            print("  Was not able to delete data models. May not exist.")
+        try:
+            client.data_modeling.spaces.delete([d for d in space_list])
+            print(f"  Deleted {len(space_list)} spaces.")
+        except:
+            print("  Was not able to delete spaces. May not exist.")
+        if only_drop:
+            return
+    print("Writing...")
     try:
         client.data_modeling.spaces.apply(
-            SpaceApply(
-                space=space_name,
-                name=space_name,
-                description=f"Space for {ToolGlobals.example} example",
-            )
+            [
+                SpaceApply(space=s, name=s, description=f"Imported space")
+                for s in space_list
+            ]
         )
     except Exception as e:
-        print(f"Failed to write space {space_name} for example {ToolGlobals.example}.")
+        print(f"  Failed to write spaces")
         print(e)
         ToolGlobals.failed = True
         return
-    print(f"Created space {space_name}.")
+    print(f"  Created {len(space_list)} spaces.")
     try:
-        client.data_modeling.containers.apply([c for c in containers.values()])
-        print(f"Created {len(containers)} containers.")
+        client.data_modeling.containers.apply([c for c in containers])
+        print(f"  Created {len(containers)} containers.")
     except Exception as e:
-        print(f"Failed to write containers for example {ToolGlobals.example}.")
-        print(e)
-        ToolGlobals.failed = True
-        return
-    try:
-        client.data_modeling.views.apply([v for v in views.values()])
-        print(f"Created {len(views)} views.")
-    except Exception as e:
-        print(f"Failed to write views for example {ToolGlobals.example}.")
+        print(f"  Failed to write containers.")
         print(e)
         ToolGlobals.failed = True
         return
     try:
-        client.data_modeling.data_models.apply(datamodel)
+        client.data_modeling.views.apply([v for v in views])
+        print(f"  Created {len(views)} views.")
     except Exception as e:
-        print(
-            f"Failed to write data model {model_name} for example {ToolGlobals.example}."
-        )
+        print(f"  Failed to write views.")
         print(e)
         ToolGlobals.failed = True
         return
-    print(f"Created data model {model_name}.")
+    try:
+        client.data_modeling.data_models.apply([d for d in datamodels])
+    except Exception as e:
+        print(f"  Failed to write data models.")
+        print(e)
+        ToolGlobals.failed = True
+        return
+    print(f"  Created {len(datamodels)} data models.")
 
 
 def describe_datamodel(ToolGlobals: CDFToolConfig, space_name, model_name) -> None:
@@ -286,7 +451,6 @@ def describe_datamodel(ToolGlobals: CDFToolConfig, space_name, model_name) -> No
 def dump_datamodels_all(
     ToolGlobals: CDFToolConfig,
     target_dir: str = "tmp",
-    model_name: str = None,
     include_global: bool = False,
 ):
     print("Verifying access rights...")
@@ -297,26 +461,65 @@ def dump_datamodels_all(
         }
     )
     try:
-        print("  data model...")
-        data_models: DataModelList = client.data_modeling.data_models.list(
-            limit=-1, include_global=include_global
+        print("  spaces...")
+        spaces = client.data_modeling.spaces.list(
+            limit=None, include_global=include_global
         )
     except Exception as e:
-        print(f"Failed to retrieve data models.")
+        print(f"  Failed to retrieve all spaces.")
+        print(e)
+    spaces = spaces.data
+    try:
+        print("  containers...")
+        containers = client.data_modeling.containers.list(
+            limit=None, include_global=True
+        )
+    except Exception as e:
+        print(f"Failed to retrieve all containers.")
         print(e)
         return
-    for d in data_models.data:
-        if model_name is not None and d.external_id != model_name:
-            continue
-        if not os.path.exists(f"{target_dir}/{d.external_id}"):
-            os.makedirs(f"{target_dir}/{d.external_id}")
-        dump_datamodel(
-            ToolGlobals,
-            d.space,
-            d.external_id,
-            d.version,
-            f"{target_dir}/{d.external_id}",
+    containers = containers.data
+    try:
+        print("  views...")
+        views = client.data_modeling.views.list(
+            limit=None, space=None, include_global=include_global
         )
+    except Exception as e:
+        print(f"  Failed to retrieve all views.")
+        print(e)
+        return
+    views = views.data
+    try:
+        print("  data models...")
+        data_models: DataModelList = client.data_modeling.data_models.list(
+            limit=-1, include_global=include_global, inline_views=True
+        )
+    except Exception as e:
+        print(f"  Failed to retrieve all data models.")
+        print(e)
+        return
+    data_models = data_models.data
+    print("Writing...")
+    for s in spaces:
+        os.makedirs(f"{target_dir}/{s.space}")
+    for d in data_models:
+        with open(
+            f"{target_dir}/{d.space}/{d.external_id}.model.json",
+            "wt",
+        ) as file:
+            json.dump(d.dump(camel_case=True), file, indent=4)
+    for v in views:
+        with open(
+            f"{target_dir}/{v.space}/{v.external_id}.view.json",
+            "wt",
+        ) as file:
+            json.dump(v.dump(camel_case=True), file, indent=4)
+    for c in containers:
+        with open(
+            f"{target_dir}//{c.space}/{c.external_id}.container.json",
+            "wt",
+        ) as file:
+            json.dump(c.dump(camel_case=True), file, indent=4)
 
 
 def dump_datamodel(
@@ -357,7 +560,7 @@ def dump_datamodel(
         data_model = client.data_modeling.data_models.retrieve(
             (space_name, model_name, version), inline_views=False
         )
-        data_model = data_model.data[0].dump()
+        data_model = data_model.data[0].dump(camel_case=True)
     except Exception as e:
         print(f"Failed to retrieve data model {model_name} in space {space_name}.")
         print(e)
@@ -367,16 +570,18 @@ def dump_datamodel(
         return
     try:
         print("  views...")
-        views = client.data_modeling.data_models.retrieve(
-            (space_name, model_name, version), inline_views=True
-        )
+        views = client.data_modeling.views.retrieve((space_name, model_name, None))
     except Exception as e:
-        print(
-            f"Failed to retrieve data model with views {model_name} in space {space_name}."
-        )
+        print(f"Failed to retrieve views from {model_name} in space {space_name}.")
         print(e)
         return
-    views = views.data[0].views
+    if len(views.data) == 0:
+        print(
+            f"{model_name} in space {space_name} does not have any views in this space."
+        )
+        views = []
+    else:
+        views = views.data[0].views
     print("Writing...")
     with open(
         f"{target_dir}/data_model.json",
@@ -388,10 +593,10 @@ def dump_datamodel(
             f"{target_dir}/{v.external_id}.view.json",
             "wt",
         ) as file:
-            json.dump(v.dump(), file, indent=4)
+            json.dump(v.dump(camel_case=True), file, indent=4)
     for c in containers:
         with open(
             f"{target_dir}/{c.external_id}.container.json",
             "wt",
         ) as file:
-            json.dump(c.dump(), file, indent=4)
+            json.dump(c.dump(camel_case=True), file, indent=4)

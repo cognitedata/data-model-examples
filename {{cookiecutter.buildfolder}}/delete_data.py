@@ -26,17 +26,36 @@ from utils import *
     help="Do not delete anything for data models, just simulate",
 )
 @click.option(
+    "--instances",
+    default=False,
+    is_flag=True,
+    help="Also delete instances (nodes and edges)",
+)
+@click.option(
     "--delete",
     default="raw,timeseries,files,transformations,datamodel,instances",
-    help="Specify which data you want to delete. Default raw,timeseries,files,transformations,datamodel(all), instances.",
+    help="Specify which data you want to delete. Default raw,timeseries,files,transformations,datamodel,datamodelall,instances",
 )
 @click.argument("example_folder")
-def cli(delete: str, example_folder: str, dry_run: bool):
+def cli(delete: str, example_folder: str, dry_run: bool, instances: bool):
+    if dry_run:
+        print("DRY RUN: no deletions will be done...")
+    if "datamodelall" in delete:
+        if example_folder == "all":
+            clean_out_datamodels(ToolGlobals, dry_run=dry_run, instances=instances)
+        else:
+            print(f"Use 'all' instead of '{example_folder}' to delete everything.")
+            print(f"Picking up all containers and views from {example_folder}.")
+            clean_out_datamodels(
+                ToolGlobals,
+                dry_run=dry_run,
+                directory=f"./examples/{example_folder}",
+                instances=instances,
+            )
+        exit(0)
     # Configure the ToolGlobals singleton with the example folder
     # It will then pick up the right configuration from the inventory.json file
     ToolGlobals.example = example_folder
-    if dry_run:
-        print("DRY RUN: no deletions will be done...")
     if "raw" in delete:
         delete_raw(ToolGlobals, dry_run=dry_run)
     if "files" in delete:

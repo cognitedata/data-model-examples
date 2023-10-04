@@ -34,14 +34,9 @@ if __name__ == "__main__":
             include_global = True
         else:
             include_global = False
-        if sys.argv[2] == "all":
-            model_name = None
-        else:
-            model_name = sys.argv[2]
         dump_datamodels_all(
             ToolGlobals,
             target_dir=sys.argv[3],
-            model_name=model_name,
             include_global=include_global,
         )
         exit(0)

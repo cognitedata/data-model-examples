@@ -30,6 +30,7 @@ from .datamodel import (
     describe_datamodel,
     dump_datamodel,
     dump_datamodels_all,
+    clean_out_datamodels,
 )
 
 from .transformations import (
