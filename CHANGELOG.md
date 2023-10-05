@@ -2,7 +2,7 @@
 
 **Please add new changelog items at the top!**
 
-## Oct 4, 2023
+## Oct 5, 2023
 
 - Add support for dumping and loading of all data models, views, containers, and spaces, also
   including global system models, views, and containers. `dump_datamodel all|global <model>|all <folder>`

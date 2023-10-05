@@ -103,29 +103,30 @@ def clean_out_datamodels(
     print(f"  {len(containers)} containers")
     print(f"  {len(views)} views")
     print(f"  {len(data_models)} data models")
-    if dry_run:
-        return
     print("Deleting...")
     try:
-        client.data_modeling.containers.delete(
-            [(c.space, c.external_id) for c in containers.data]
-        )
+        if not dry_run:
+            client.data_modeling.containers.delete(
+                [(c.space, c.external_id) for c in containers.data]
+            )
         print(f"  Deleted {len(containers)} containers.")
     except Exception as e:
         print("  Was not able to delete containers. May not exist.")
         print(e)
     try:
-        client.data_modeling.views.delete(
-            [(v.space, v.external_id, v.version) for v in views.data]
-        )
+        if not dry_run:
+            client.data_modeling.views.delete(
+                [(v.space, v.external_id, v.version) for v in views.data]
+            )
         print(f"  Deleted {len(views)} views.")
     except Exception as e:
         print("  Was not able to delete views. May not exist.")
         print(e)
     try:
-        client.data_modeling.data_models.delete(
-            [(d.space, d.external_id, d.version) for d in data_models.data]
-        )
+        if not dry_run:
+            client.data_modeling.data_models.delete(
+                [(d.space, d.external_id, d.version) for d in data_models.data]
+            )
         print(f"  Deleted {len(data_models)} data models.")
     except Exception as e:
         print("  Was not able to delete data models. May not exist.")
@@ -134,18 +135,47 @@ def clean_out_datamodels(
     for s in spaces.data:
         if instances:
             print("Found --instances flag and will delete remaining nodes and edges.")
+            # Find any remaining edges in the space
+            edge_count = 0
+            edge_delete = 0
+            for instance_list in client.data_modeling.instances(
+                instance_type="edge",
+                include_typing=True,
+                limit=None,
+                filter={
+                    "equals": {
+                        "property": ["edge", "space"],
+                        "value": s.space,
+                    }
+                },
+                chunk_size=1000,
+            ):
+                instances = [(s.space, i.external_id) for i in instance_list.data]
+                if not dry_run:
+                    ret = client.data_modeling.instances.delete(edges=instances)
+                    edge_delete += len(ret.edges)
+                edge_count += len(instance_list)
+            print(
+                f"Found {edge_count} edges and deleted {edge_delete} instances from {s.space}."
+            )
             # Find any remaining nodes in the space
             node_count = 0
             node_delete = 0
             for instance_list in client.data_modeling.instances(
                 instance_type="node",
-                include_typing=False,
-                filter={"equals": {"property": ["node", "space"], "value": s.space}},
+                include_typing=True,
+                limit=None,
+                filter={
+                    "equals": {
+                        "property": ["node", "space"],
+                        "value": s.space,
+                    }
+                },
                 chunk_size=1000,
             ):
                 instances = [(s.space, i.external_id) for i in instance_list.data]
                 if not dry_run:
-                    ret = client.data_modeling.instances.delete(instances)
+                    ret = client.data_modeling.instances.delete(nodes=instances)
                     node_delete += len(ret.nodes)
                 node_count += len(instance_list)
             print(
@@ -156,7 +186,8 @@ def clean_out_datamodels(
                 "Did not find --instances flag and will try to delete space without deleting remaining nodes and edges."
             )
         try:
-            client.data_modeling.spaces.delete(s.space)
+            if not dry_run:
+                client.data_modeling.spaces.delete(s.space)
             i += 1
         except Exception as e:
             print(f"  Was not able to delete space {s.space}.")
