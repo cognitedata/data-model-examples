@@ -23,10 +23,23 @@ from utils import *
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: ./dump_datamodel.py <space> <data_model> <directory>")
+        print(
+            "Usage: ./dump_datamodel.py <space|all|global> <data_model|all> <directory>"
+        )
         exit(1)
     if not os.path.exists(sys.argv[3]):
         os.makedirs(sys.argv[3])
+    if sys.argv[1] in ["all", "global"]:
+        if sys.argv[1] == "global":
+            include_global = True
+        else:
+            include_global = False
+        dump_datamodels_all(
+            ToolGlobals,
+            target_dir=sys.argv[3],
+            include_global=include_global,
+        )
+        exit(0)
     dump_datamodel(
         ToolGlobals,
         space_name=sys.argv[1],

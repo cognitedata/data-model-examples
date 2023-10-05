@@ -2,6 +2,18 @@
 
 **Please add new changelog items at the top!**
 
+## Oct 5, 2023
+
+- Add support for dumping and loading of all data models, views, containers, and spaces, also
+  including global system models, views, and containers. `dump_datamodel all|global <model>|all <folder>`
+  will dump from all (including global spaces) and either the model or all models. Also views and containers
+  without a data model will be dumped. The dump will be structured with a directory per space.
+- `load_data.py --load datamodeldump <example>` will load from examples/<example>/data_model/, including one level
+  of subdirectories.
+- Add support for cleaning out all data in a CDF project, CAREFUL!! `delete_data.py --delete datamodelall --instances --dry-run all` will delete all configuration in your project and clean out all instances. Use `--dry-run`
+  to see what will happen. Drop the `--instances` to only delete the configuration and fail on deletion of spaces
+  if there are remaining instances.
+
 ## Oct 2, 2023 - Adapt the repo to continuous testing
 
 - Support use of env var CDF_TOKEN to supply OAuth2 token and thus not require
