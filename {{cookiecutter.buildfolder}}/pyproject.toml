@@ -1,9 +1,6 @@
 [tool.poetry]
 name = "cognite-toolkit"
-name = "cognite-toolkit"
 version = "0.2.0"
-description = "Toolkit and data modeling examples for Cognite Data Fusion"
-authors = ["Greger Teigre Wedel <greger.wedel@cognite.com>"]
 description = "Toolkit and data modeling examples for Cognite Data Fusion"
 authors = ["Greger Teigre Wedel <greger.wedel@cognite.com>"]
 license = "Apache 2.0"
