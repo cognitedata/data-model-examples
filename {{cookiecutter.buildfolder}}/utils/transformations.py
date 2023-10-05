@@ -114,6 +114,11 @@ def load_transformations_dump(
     drop: bool = False,
     directory: str = None,
 ) -> None:
+    """Load transformations from dump folder.
+
+    This code only gives a partial support for transformations by loading the actual sql query and the
+    necessary config. Schedules, authentication, etc is not supported.
+    """
     if directory is None:
         directory = f"./examples/{ToolGlobals.example}/transformations/dump"
     client = ToolGlobals.verify_client(
@@ -135,13 +140,18 @@ def load_transformations_dump(
             tf = json.load(file)
             if type(tf) == dict:
                 tf = [tf]
+            # This code basically runs through the propertoes of the Transformation class and
+            # converts the nested dicts into the right objects.
+            # Full serialization and deserialization of the entire transformations API is not supported.
             for t in tf:
                 ta = Transformation()
                 for k, v in t.items():
                     if k == "destination":
+                        # The destination dict is converted into a TransformationDestination object.
                         ta.destination = TransformationDestination(v["type"])
                         v.pop("type")
                         for k2, v2 in v.items():
+                            # The data_model dict is converted into a DataModelInfo object.
                             if k2 == "data_model":
                                 ta.destination.data_model = DataModelInfo(
                                     space=v2.get("space"),
@@ -150,8 +160,12 @@ def load_transformations_dump(
                                     destination_type=v2.get("destination_type"),
                                 )
                             else:
+                                # Here we just pick up the values for each attribute in the dict and sets
+                                # the corresponding property on the object.
                                 ta.destination.__setattr__(k2, v2)
                     else:
+                        # Here we just pick up the values for each attribute in the dict and sets
+                        # the corresponding property on the object.
                         ta.__setattr__(k, v)
                 transformations.append(ta)
     ext_ids = [t.external_id for t in transformations]
