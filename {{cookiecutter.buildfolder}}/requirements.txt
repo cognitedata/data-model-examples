@@ -19,7 +19,7 @@ msal==1.24.0
 numpy==1.26.0
 oauthlib==3.2.2
 pandas==2.1.1
-protobuf==4.24.3
+protobuf==4.24.4
 pycparser==2.21
 pygments==2.16.1
 pyjwt[crypto]==2.8.0
