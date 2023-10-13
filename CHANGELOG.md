@@ -2,6 +2,10 @@
 
 **Please add new changelog items at the top!**
 
+## Oct 13, 2023
+
+- Fixed a bug in the restore_datamodel.py script making it pretty much useful for loading a data model dump.
+
 ## Oct 5, 2023
 
 - Add support for dumping and loading of all data models, views, containers, and spaces, also
