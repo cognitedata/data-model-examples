@@ -14,12 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
+import click
 from utils import *
 
-if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: ./restore_datamodel.py <dataset>")
+
+@click.command()
+@click.option("--drop", is_flag=True, default=False, help="Whether to drop data first.")
+@click.option("--dry-run", is_flag=True, default=False, help="Whether to do a dry-run.")
+@click.argument("folder")
+def cli(dry_run: bool, drop: bool, folder: str):
+    load_datamodel_dump(ToolGlobals, drop=drop, dry_run=dry_run, directory=folder)
+    if ToolGlobals.failed:
+        print(f"Failure to load as expected.")
         exit(1)
 
-    load_datamodel_dump(ToolGlobals)
+
+if __name__ == "__main__":
+    cli()
