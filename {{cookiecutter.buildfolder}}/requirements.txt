@@ -3,7 +3,7 @@ binaryornot==0.4.4
 certifi==2023.7.22
 cffi==1.16.0
 chardet==5.2.0
-charset-normalizer==3.3.0
+charset-normalizer==3.3.2
 click==8.1.7
 cognite-sdk[pandas]==6.32.4
 colorama==0.4.6
