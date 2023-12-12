@@ -18,7 +18,7 @@ mdurl==0.1.2
 msal==1.24.1
 numpy==1.26.0
 oauthlib==3.2.2
-pandas==2.1.1
+pandas==2.1.4
 protobuf==4.24.4
 pycparser==2.21
 pygments==2.16.1
