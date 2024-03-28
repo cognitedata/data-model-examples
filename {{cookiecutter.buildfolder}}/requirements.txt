@@ -5,7 +5,7 @@ cffi==1.16.0
 chardet==5.2.0
 charset-normalizer==3.3.2
 click==8.1.7
-cognite-sdk[pandas]==6.39.6
+cognite-sdk[pandas]==7.31.0
 colorama==0.4.6
 cookiecutter==2.5.0
 cryptography==41.0.7
